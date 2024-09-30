@@ -20,7 +20,15 @@ push() {
     echo "Enter commit message:"
     read commit_message
     git commit -m "$commit_message"
-    git push
+
+    current_branch=$(git rev-parse --abbrev-ref HEAD)
+    if git config --get branch."$current_branch".merge &>/dev/null; then
+        echo -e "${GREEN}Pushing changes to existing upstream branch${NC}"
+        git push
+    else
+        echo -e "${ORANGE}No upstream branch set. Setting upstream to origin/$current_branch${NC}"
+        git push --set-upstream origin "$current_branch"
+    fi
 }
 
 # Function to perform git commit operation
@@ -126,6 +134,7 @@ help() {
     echo
     echo -e "  ${GREEN}push${NC}          Rapidly stage, commit, and push changes"
     echo -e "             ${BLUE}Actions:${NC} add all changes, prompt for commit message, commit, push"
+    echo -e "             ${BLUE}Note:${NC} Automatically sets upstream branch if not set"
     echo -e "             ${BLUE}Example:${NC} gits push"
     echo
     echo -e "  ${GREEN}commit${NC}        Commit changes with a message"
