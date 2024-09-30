@@ -109,21 +109,52 @@ uninstall() {
     fi
 }
 
-# Function to display help information
 help() {
     echo -e "${BLUE}GitS - Git Speed${NC}"
     echo -e "${YELLOW}Description:${NC} GitS is a tool for quickly combining git commands to speed up your workflow."
     echo -e "${YELLOW}Usage:${NC} gits <command>"
     echo
     echo -e "${GREEN}Available commands:${NC}"
-    echo -e "  ${YELLOW}pull [branch]${NC} Quickly update your local repository (default: development)"
+    echo -e "  ${YELLOW}pull [branch]${NC} Quickly update your local repository"
+    echo -e "             ${BLUE}Actions:${NC} checkout branch, stash changes, fetch, pull, show status"
+    echo -e "             ${BLUE}Note:${NC} If no branch is specified, it defaults to 'development'"
+    echo -e "             ${BLUE}Example:${NC} gits pull"
+    echo -e "             ${BLUE}Example:${NC} gits pull main"
+    echo
     echo -e "  ${YELLOW}push${NC}          Rapidly stage, commit, and push changes"
+    echo -e "             ${BLUE}Actions:${NC} add all changes, prompt for commit message, commit, push"
+    echo -e "             ${BLUE}Example:${NC} gits push"
+    echo
     echo -e "  ${YELLOW}commit${NC}        Commit changes with a message"
+    echo -e "             ${BLUE}Actions:${NC} prompt for commit message, commit"
+    echo -e "             ${BLUE}Example:${NC} gits commit"
+    echo
     echo -e "  ${YELLOW}init${NC}          Initialize a new Git repository and push to GitHub"
+    echo -e "             ${BLUE}Actions:${NC} init repo, create initial branch, add files, commit, push to GitHub"
+    echo -e "             ${BLUE}Example:${NC} gits init"
+    echo
     echo -e "  ${YELLOW}new [name]${NC}    Create a new branch and switch to it"
+    echo -e "             ${BLUE}Actions:${NC} create new branch, switch to it"
+    echo -e "             ${BLUE}Note:${NC} If no name is provided, you'll be prompted to enter one"
+    echo -e "             ${BLUE}Example:${NC} gits new"
+    echo -e "             ${BLUE}Example:${NC} gits new feature-branch"
+    echo
     echo -e "  ${YELLOW}install${NC}       Install GitS to /usr/local/bin (requires sudo)"
+    echo -e "             ${BLUE}Example:${NC} gits install"
+    echo
     echo -e "  ${YELLOW}uninstall${NC}     Remove GitS from /usr/local/bin (requires sudo)"
+    echo -e "             ${BLUE}Example:${NC} gits uninstall"
+    echo
     echo -e "  ${YELLOW}help${NC}          Display this help message"
+    echo -e "             ${BLUE}Example:${NC} gits help"
+    echo
+    echo -e "${GREEN}Examples:${NC}"
+    echo -e "  ${BLUE}Pull changes:${NC}"
+    echo -e "    gits pull"
+    echo
+    echo -e "  ${BLUE}Push changes:${NC}"
+    echo -e "    gits push"
+    echo -e "    ${YELLOW}Enter commit message:${NC} Update README.md"
     echo
     echo -e "${YELLOW}Note:${NC} Ensure you're in your git repository directory when running git-related commands."
 }
