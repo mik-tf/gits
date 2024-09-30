@@ -21,6 +21,57 @@ push() {
     git push
 }
 
+# Function to initialize a new Git repository and push to GitHub
+init() {
+    echo -e "${YELLOW}Initializing new Git repository and pushing to GitHub...${NC}"
+    
+    # Prompt for GitHub username and repository name
+    echo -e "Enter your GitHub username:"
+    read github_username
+    echo -e "Enter the repository name:"
+    read repo_name
+
+    echo -e "${YELLOW}Make sure to create a repository on GitHub with the proper username (${github_username}) and repository (${repo_name})${NC}"
+    echo -e "Press Enter when you're ready to continue..."
+    read
+
+    # Initialize Git repository
+    git init
+
+    # Set initial branch name
+    initial_branch="main"
+    echo -e "${YELLOW}Setting initial branch as '${initial_branch}'. Press ENTER to continue or type 'replace' to change the branch name:${NC}"
+    read branch_choice
+
+    if [[ $branch_choice == "replace" ]]; then
+        echo -e "Enter the new branch name:"
+        read new_branch_name
+        initial_branch=$new_branch_name
+    fi
+
+    # Create and switch to the initial branch
+    git checkout -b $initial_branch
+
+    # Stage all files
+    git add .
+
+    # Prompt for initial commit message
+    echo "Enter initial commit message:"
+    read commit_message
+
+    # Commit changes
+    git commit -m "$commit_message"
+
+    # Add remote origin
+    git remote add origin "https://github.com/$github_username/$repo_name.git"
+
+    # Push to GitHub
+    git push -u origin $initial_branch
+
+    echo -e "${GREEN}Repository initialized and pushed to GitHub successfully.${NC}"
+    echo -e "Branch: ${BLUE}$initial_branch${NC}"
+}
+
 # Function to install the script
 install() {
     echo -e "${YELLOW}Installing GitS...${NC}"
@@ -66,6 +117,10 @@ help() {
     echo -e "             ${BLUE}Actions:${NC} add all changes, prompt for commit message, commit, push"
     echo -e "             ${BLUE}Example:${NC} gits push"
     echo
+    echo -e "  ${YELLOW}init${NC}      Initialize a new Git repository and push to GitHub"
+    echo -e "             ${BLUE}Actions:${NC} init, set branch, add all, commit, add remote, push to GitHub"
+    echo -e "             ${BLUE}Example:${NC} gits init"
+    echo
     echo -e "  ${YELLOW}install${NC}   Install GitS to /usr/local/bin (requires sudo)"
     echo -e "             ${BLUE}Example:${NC} gits install"
     echo
@@ -82,6 +137,13 @@ help() {
     echo -e "  ${BLUE}Push changes:${NC}"
     echo -e "    gits push"
     echo -e "    ${YELLOW}Enter commit message:${NC} Update README.md"
+    echo
+    echo -e "  ${BLUE}Initialize new repository:${NC}"
+    echo -e "    gits init"
+    echo -e "    ${YELLOW}Enter your GitHub username:${NC} johndoe"
+    echo -e "    ${YELLOW}Enter the repository name:${NC} my-new-project"
+    echo -e "    ${YELLOW}Setting initial branch as 'main'. Press ENTER to continue or type 'replace' to change the branch name:${NC}"
+    echo -e "    ${YELLOW}Enter the new branch name:${NC} development"
     echo
     echo -e "${YELLOW}Note:${NC} Ensure you're in your git repository directory when running git-related commands."
 }
@@ -101,6 +163,9 @@ main() {
             ;;
         push)
             push
+            ;;
+        init)
+            init
             ;;
         install)
             install
