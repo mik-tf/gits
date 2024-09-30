@@ -32,7 +32,7 @@ To install GitS, simply clone the repository and use the install command:
 ```bash
 git clone https://github.com/Mik-TF/gits.git
 cd gits
-./gits.sh install
+bash ./gits.sh install
 ```
 
 This will copy the script to `/usr/local/bin/gits`, making it accessible system-wide. You'll need to enter your sudo password.
@@ -77,9 +77,9 @@ To create an issue, visit the [Issues page](https://github.com/Mik-TF/git_speed/
 Contributions are welcome! If you'd like to contribute:
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
+2. Create your feature branch (`git checkout -b development_some_details`)
+3. Commit your changes (`git commit -m 'Write a commit message'`)
+4. Push to the branch (`git push origin development_some_details`)
 5. Open a Pull Request
 
 ## License
