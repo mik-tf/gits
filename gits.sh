@@ -148,14 +148,6 @@ help() {
     echo -e "  ${YELLOW}help${NC}          Display this help message"
     echo -e "             ${BLUE}Example:${NC} gits help"
     echo
-    echo -e "${GREEN}Examples:${NC}"
-    echo -e "  ${BLUE}Pull changes:${NC}"
-    echo -e "    gits pull"
-    echo
-    echo -e "  ${BLUE}Push changes:${NC}"
-    echo -e "    gits push"
-    echo -e "    ${YELLOW}Enter commit message:${NC} Update README.md"
-    echo
     echo -e "${YELLOW}Note:${NC} Ensure you're in your git repository directory when running git-related commands."
 }
 
