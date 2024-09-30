@@ -11,7 +11,6 @@
 - [Contributing](#contributing)
 - [License](#license)
 
-
 ## Introduction
 
 GitS is a bash script designed to streamline the Git workflow by combining common Git commands into quick, easy-to-use operations. It's perfect for developers who want to speed up their Git interactions and simplify their daily version control tasks.
@@ -20,6 +19,9 @@ GitS is a bash script designed to streamline the Git workflow by combining commo
 
 - **Quick Pull**: Combines checkout, stash, fetch, pull, and status operations.
 - **Rapid Push**: Stages all changes, prompts for a commit message, commits, and pushes in one command.
+- **Easy Commit**: Quickly commit changes with a custom message.
+- **Repository Initialization**: Initialize a new Git repository and push it to GitHub.
+- **Branch Creation**: Create and switch to a new branch easily.
 - **Easy Installation**: Simple install and uninstall process.
 - **User-Friendly**: Colorized output and helpful error messages.
 
@@ -39,9 +41,14 @@ This will copy the script to `/usr/local/bin/gits`, making it accessible system-
 
 After installation, you can use GitS from any directory with the following commands:
 
-- `gits pull`: Quickly update your local repository
+- `gits pull [branch]`: Quickly update your local repository
 - `gits push`: Rapidly stage, commit, and push changes
+- `gits commit`: Commit changes with a custom message
+- `gits init`: Initialize a new Git repository and push to GitHub
+- `gits new [name]`: Create a new branch and switch to it
 - `gits help`: Display help information
+
+For detailed usage information, run `gits help`.
 
 ## Uninstallation
 
