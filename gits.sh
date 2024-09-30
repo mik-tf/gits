@@ -72,6 +72,14 @@ init() {
     echo -e "Branch: ${BLUE}$initial_branch${NC}"
 }
 
+# Function to create a new branch
+new() {
+    echo -e "Enter the name of the new branch:"
+    read branch_name
+    git checkout -b "$branch_name"
+    echo -e "${GREEN}New branch '${branch_name}' created and checked out.${NC}"
+}
+
 # Function to install the script
 install() {
     echo -e "${YELLOW}Installing GitS...${NC}"
@@ -121,6 +129,10 @@ help() {
     echo -e "             ${BLUE}Actions:${NC} init, set branch, add all, commit, add remote, push to GitHub"
     echo -e "             ${BLUE}Example:${NC} gits init"
     echo
+    echo -e "  ${YELLOW}new${NC}       Create a new branch and switch to it"
+    echo -e "             ${BLUE}Actions:${NC} prompt for branch name, create and checkout new branch"
+    echo -e "             ${BLUE}Example:${NC} gits new"
+    echo
     echo -e "  ${YELLOW}install${NC}   Install GitS to /usr/local/bin (requires sudo)"
     echo -e "             ${BLUE}Example:${NC} gits install"
     echo
@@ -145,6 +157,10 @@ help() {
     echo -e "    ${YELLOW}Setting initial branch as 'main'. Press ENTER to continue or type 'replace' to change the branch name:${NC}"
     echo -e "    ${YELLOW}Enter the new branch name:${NC} development"
     echo
+    echo -e "  ${BLUE}Create a new branch:${NC}"
+    echo -e "    gits new"
+    echo -e "    ${YELLOW}Enter the name of the new branch:${NC} new_branch_name"
+    echo
     echo -e "${YELLOW}Note:${NC} Ensure you're in your git repository directory when running git-related commands."
 }
 
@@ -166,6 +182,9 @@ main() {
             ;;
         init)
             init
+            ;;
+        new)
+            new
             ;;
         install)
             install
