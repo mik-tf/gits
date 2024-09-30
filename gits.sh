@@ -70,8 +70,12 @@ init() {
 
 # Function to create a new branch
 new() {
-    echo -e "Enter the name of the new branch:"
-    read branch_name
+    if [ -z "$1" ]; then
+        echo -e "Enter the name of the new branch:"
+        read branch_name
+    else
+        branch_name="$1"
+    fi
     git checkout -b "$branch_name"
     echo -e "${GREEN}New branch '${branch_name}' created and checked out.${NC}"
 }
@@ -116,7 +120,7 @@ help() {
     echo -e "  ${YELLOW}push${NC}          Rapidly stage, commit, and push changes"
     echo -e "  ${YELLOW}commit${NC}        Commit changes with a message"
     echo -e "  ${YELLOW}init${NC}          Initialize a new Git repository and push to GitHub"
-    echo -e "  ${YELLOW}new${NC}           Create a new branch and switch to it"
+    echo -e "  ${YELLOW}new [name]${NC}    Create a new branch and switch to it"
     echo -e "  ${YELLOW}install${NC}       Install GitS to /usr/local/bin (requires sudo)"
     echo -e "  ${YELLOW}uninstall${NC}     Remove GitS from /usr/local/bin (requires sudo)"
     echo -e "  ${YELLOW}help${NC}          Display this help message"
@@ -146,7 +150,8 @@ main() {
             init
             ;;
         new)
-            new
+            shift
+            new "$@"
             ;;
         install)
             install
