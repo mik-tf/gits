@@ -9,7 +9,8 @@ NC='\033[0m' # No Color
 
 # Function to perform git pull operations
 pull() {
-    git checkout development && git stash && git fetch && git pull && git status
+    local branch=${1:-development}
+    git checkout "$branch" && git stash && git fetch && git pull && git status
 }
 
 # Function to perform git push operations
@@ -111,14 +112,14 @@ help() {
     echo -e "${YELLOW}Usage:${NC} gits <command>"
     echo
     echo -e "${GREEN}Available commands:${NC}"
-    echo -e "  ${YELLOW}pull${NC}      Quickly update your local repository"
-    echo -e "  ${YELLOW}push${NC}      Rapidly stage, commit, and push changes"
-    echo -e "  ${YELLOW}commit${NC}    Commit changes with a message"
-    echo -e "  ${YELLOW}init${NC}      Initialize a new Git repository and push to GitHub"
-    echo -e "  ${YELLOW}new${NC}       Create a new branch and switch to it"
-    echo -e "  ${YELLOW}install${NC}   Install GitS to /usr/local/bin (requires sudo)"
-    echo -e "  ${YELLOW}uninstall${NC} Remove GitS from /usr/local/bin (requires sudo)"
-    echo -e "  ${YELLOW}help${NC}      Display this help message"
+    echo -e "  ${YELLOW}pull [branch]${NC} Quickly update your local repository (default: development)"
+    echo -e "  ${YELLOW}push${NC}          Rapidly stage, commit, and push changes"
+    echo -e "  ${YELLOW}commit${NC}        Commit changes with a message"
+    echo -e "  ${YELLOW}init${NC}          Initialize a new Git repository and push to GitHub"
+    echo -e "  ${YELLOW}new${NC}           Create a new branch and switch to it"
+    echo -e "  ${YELLOW}install${NC}       Install GitS to /usr/local/bin (requires sudo)"
+    echo -e "  ${YELLOW}uninstall${NC}     Remove GitS from /usr/local/bin (requires sudo)"
+    echo -e "  ${YELLOW}help${NC}          Display this help message"
     echo
     echo -e "${YELLOW}Note:${NC} Ensure you're in your git repository directory when running git-related commands."
 }
@@ -132,7 +133,8 @@ main() {
 
     case "$1" in
         pull)
-            pull
+            shift
+            pull "$@"
             ;;
         push)
             push
