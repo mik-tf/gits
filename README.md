@@ -6,6 +6,7 @@
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
+  - [Revert Function](#revert-function)
 - [Uninstallation](#uninstallation)
 - [Issues and Feature Requests](#issues-and-feature-requests)
 - [Contributing](#contributing)
@@ -22,6 +23,7 @@ GitS is a bash script designed to streamline the Git workflow by combining commo
 - **Easy Commit**: Quickly commit changes with a custom message.
 - **Repository Initialization**: Initialize a new Git repository and push it to GitHub.
 - **Branch Creation**: Create and switch to a new branch easily.
+- **Commit Revert**: Revert to a specified number of commits ago.
 - **Easy Installation**: Simple install and uninstall process.
 - **User-Friendly**: Colorized output and helpful error messages.
 
@@ -46,9 +48,24 @@ After installation, you can use GitS from any directory with the following comma
 - `gits commit`: Commit changes with a custom message
 - `gits init`: Initialize a new Git repository and push to GitHub
 - `gits new [name]`: Create a new branch and switch to it
+- `gits revert <number>`: Revert to a specified number of commits ago
 - `gits help`: Display help information
 
 For detailed usage information, run `gits help`.
+
+### Revert Function
+
+The new `revert` function allows you to easily revert to a previous state:
+
+```bash
+gits revert <number>
+```
+
+- `<number>`: The number of commits to go back.
+- Example: `gits revert 1` reverts the last commit
+- Example: `gits revert 3` reverts to 3 commits ago
+
+This command stages the revert changes but does not automatically commit them, allowing you to review the changes before committing.
 
 ## Uninstallation
 

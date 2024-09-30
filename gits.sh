@@ -89,6 +89,28 @@ new() {
     echo -e "${PURPLE}New branch '${branch_name}' created and checked out.${NC}"
 }
 
+# Function to revert a specified number of commits
+revert() {
+    if [ -z "$1" ] || ! [[ "$1" =~ ^[0-9]+$ ]]; then
+        echo -e "${RED}Error: Please provide a valid number of commits to revert.${NC}"
+        echo -e "Usage: gits revert <number>"
+        return 1
+    fi
+
+    num_commits=$1
+    commit_to_revert="HEAD~$((num_commits-1))"
+
+    echo -e "${GREEN}Reverting to $num_commits commit(s) ago...${NC}"
+    
+    if git revert --no-commit "$commit_to_revert"; then
+        echo -e "${PURPLE}Changes have been staged. Review the changes and commit when ready.${NC}"
+        echo -e "Use ${BLUE}git status${NC} to see the changes."
+        echo -e "Use ${BLUE}git commit -m 'Revert message'${NC} to commit the revert."
+    else
+        echo -e "${RED}Error occurred while reverting. Please resolve conflicts if any.${NC}"
+    fi
+}
+
 # Function to install the script
 install() {
     echo -e "${GREEN}Installing GitS...${NC}"
@@ -151,6 +173,12 @@ help() {
     echo -e "             ${BLUE}Example:${NC} gits new"
     echo -e "             ${BLUE}Example:${NC} gits new feature-branch"
     echo
+    echo -e "  ${GREEN}revert <number>${NC} Revert to a specified number of commits ago"
+    echo -e "             ${BLUE}Actions:${NC} revert changes to the state X commits ago, stage changes"
+    echo -e "             ${BLUE}Note:${NC} Changes are staged but not committed automatically"
+    echo -e "             ${BLUE}Example:${NC} gits revert 1 (reverts the last commit)"
+    echo -e "             ${BLUE}Example:${NC} gits revert 3 (reverts to 3 commits ago)"
+    echo
     echo -e "  ${GREEN}install${NC}       Install GitS to /usr/local/bin (requires sudo)"
     echo -e "             ${BLUE}Example:${NC} gits install"
     echo
@@ -187,6 +215,10 @@ main() {
         new)
             shift
             new "$@"
+            ;;
+        revert)
+            shift
+            revert "$@"
             ;;
         install)
             install
