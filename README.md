@@ -30,7 +30,7 @@ To install GitS, simply clone the repository and use the install command:
 ```bash
 git clone https://github.com/Mik-TF/gits.git
 cd gits
-bash ./gits install
+bash ./gits.sh install
 ```
 
 This will copy the script to `/usr/local/bin/gits`, making it accessible system-wide. You'll need to enter your sudo password.
