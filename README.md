@@ -7,6 +7,7 @@
 - [Installation](#installation)
 - [Usage](#usage)
   - [Revert Function](#revert-function)
+  - [Unrevert Function](#unrevert-function)
 - [Uninstallation](#uninstallation)
 - [Issues and Feature Requests](#issues-and-feature-requests)
 - [Contributing](#contributing)
@@ -24,6 +25,7 @@ GitS is a bash script designed to streamline the Git workflow by combining commo
 - **Repository Initialization**: Initialize a new Git repository and push it to GitHub.
 - **Branch Creation**: Create and switch to a new branch easily.
 - **Commit Revert**: Revert to a specified number of commits ago.
+- **Unrevert**: Cancel the last revert operation.
 - **Easy Installation**: Simple install and uninstall process.
 - **User-Friendly**: Colorized output and helpful error messages.
 
@@ -49,13 +51,14 @@ After installation, you can use GitS from any directory with the following comma
 - `gits init`: Initialize a new Git repository and push to GitHub
 - `gits new [name]`: Create a new branch and switch to it
 - `gits revert <number>`: Revert to a specified number of commits ago
+- `gits unrevert`: Cancel the last revert operation
 - `gits help`: Display help information
 
 For detailed usage information, run `gits help`.
 
 ### Revert Function
 
-The new `revert` function allows you to easily revert to a previous state:
+The `revert` function allows you to easily revert to a previous state:
 
 ```bash
 gits revert <number>
@@ -66,6 +69,16 @@ gits revert <number>
 - Example: `gits revert 3` reverts to 3 commits ago
 
 This command stages the revert changes but does not automatically commit them, allowing you to review the changes before committing.
+
+### Unrevert Function
+
+The new `unrevert` function allows you to cancel the last revert operation:
+
+```bash
+gits unrevert
+```
+
+This command cancels the last revert if it hasn't been committed yet. It's useful if you accidentally revert changes and want to undo the revert operation.
 
 ## Uninstallation
 

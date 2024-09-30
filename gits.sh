@@ -111,6 +111,16 @@ revert() {
     fi
 }
 
+# Function to cancel the last revert
+unrevert() {
+    echo -e "${GREEN}Cancelling the last revert...${NC}"
+    if git reset --hard HEAD; then
+        echo -e "${PURPLE}Last revert has been cancelled successfully.${NC}"
+    else
+        echo -e "${RED}Error occurred while cancelling the revert. Please check your Git status.${NC}"
+    fi
+}
+
 # Function to install the script
 install() {
     echo -e "${GREEN}Installing GitS...${NC}"
@@ -179,6 +189,10 @@ help() {
     echo -e "             ${BLUE}Example:${NC} gits revert 1 (reverts the last commit)"
     echo -e "             ${BLUE}Example:${NC} gits revert 3 (reverts to 3 commits ago)"
     echo
+    echo -e "  ${GREEN}unrevert${NC}      Cancel the last revert operation"
+    echo -e "             ${BLUE}Actions:${NC} Undo the last revert if it hasn't been committed"
+    echo -e "             ${BLUE}Example:${NC} gits unrevert"
+    echo
     echo -e "  ${GREEN}install${NC}       Install GitS to /usr/local/bin (requires sudo)"
     echo -e "             ${BLUE}Example:${NC} gits install"
     echo
@@ -219,6 +233,9 @@ main() {
         revert)
             shift
             revert "$@"
+            ;;
+        unrevert)
+            unrevert
             ;;
         install)
             install
