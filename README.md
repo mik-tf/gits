@@ -26,7 +26,6 @@ GitS is a bash script designed to streamline the Git workflow by combining commo
 - **Branch Creation**: Create and switch to a new branch easily.
 - **Commit Revert**: Revert to a specified number of commits ago.
 - **Unrevert**: Cancel the last revert operation.
-- **Clone**: Easily clone a GitHub repository and change to its directory.
 - **Easy Installation**: Simple install and uninstall process.
 - **User-Friendly**: Colorized output and helpful error messages.
 
