@@ -150,6 +150,31 @@ uninstall() {
     fi
 }
 
+# Function to clone a GitHub repository
+clone() {
+    if [ -z "$1" ]; then
+        echo -e "${RED}Error: Please provide a GitHub repository URL or org/repo.${NC}"
+        echo -e "Usage: gits clone <github.com/org/repo> or <org/repo>"
+        return 1
+    fi
+
+    local repo="$1"
+    if [[ $repo != http* ]]; then
+        repo="https://github.com/$repo"
+    fi
+
+    echo -e "${GREEN}Cloning repository: $repo${NC}"
+    if git clone "$repo"; then
+        local repo_name=$(basename "$repo" .git)
+        cd "$repo_name"
+        echo -e "${PURPLE}Repository cloned successfully. Switched to directory: $(pwd)${NC}"
+        echo -e '\nHit [Ctrl]+[D] to exit this child shell.'
+        exec bash
+    else
+        echo -e "${RED}Error: Failed to clone the repository.${NC}"
+    fi
+}
+
 help() {
     echo -e "\n${ORANGE}═══════════════════════${NC}"
     echo -e "${ORANGE}    GitS - Git Speed    ${NC}"
@@ -192,6 +217,11 @@ help() {
     echo -e "  ${GREEN}unrevert${NC}      Cancel the last revert operation"
     echo -e "             ${BLUE}Actions:${NC} Undo the last revert if it hasn't been committed"
     echo -e "             ${BLUE}Example:${NC} gits unrevert"
+    echo
+    echo -e "  ${GREEN}clone <repo>${NC}  Clone a GitHub repository"
+    echo -e "             ${BLUE}Actions:${NC} Clone the repository, switch to the repo directory"
+    echo -e "             ${BLUE}Example:${NC} gits clone github.com/org/repo"
+    echo -e "             ${BLUE}Example:${NC} gits clone org/repo"
     echo
     echo -e "  ${GREEN}install${NC}       Install GitS to /usr/local/bin (requires sudo)"
     echo -e "             ${BLUE}Example:${NC} gits install"
@@ -236,6 +266,10 @@ main() {
             ;;
         unrevert)
             unrevert
+            ;;
+        clone)
+            shift
+            clone "$@"
             ;;
         install)
             install

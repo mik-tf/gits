@@ -6,6 +6,7 @@
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
+  - [Clone Function](#clone-function)
   - [Revert Function](#revert-function)
   - [Unrevert Function](#unrevert-function)
 - [Uninstallation](#uninstallation)
@@ -26,6 +27,7 @@ GitS is a bash script designed to streamline the Git workflow by combining commo
 - **Branch Creation**: Create and switch to a new branch easily.
 - **Commit Revert**: Revert to a specified number of commits ago.
 - **Unrevert**: Cancel the last revert operation.
+- **Clone**: Easily clone a GitHub repository and switch to its directory.
 - **Easy Installation**: Simple install and uninstall process.
 - **User-Friendly**: Colorized output and helpful error messages.
 
@@ -52,9 +54,24 @@ After installation, you can use GitS from any directory with the following comma
 - `gits new [name]`: Create a new branch and switch to it
 - `gits revert <number>`: Revert to a specified number of commits ago
 - `gits unrevert`: Cancel the last revert operation
+- `gits clone <repo>`: Clone a GitHub repository
 - `gits help`: Display help information
 
 For detailed usage information, run `gits help`.
+
+### Clone Function
+
+The `clone` function allows you to easily clone a GitHub repository:
+
+```bash
+gits clone <repo>
+```
+
+- `<repo>`: The GitHub repository URL or org/repo.
+- Example: `gits clone github.com/org/repo`
+- Example: `gits clone org/repo`
+
+This command clones the repository and switches to the newly cloned directory.
 
 ### Revert Function
 
