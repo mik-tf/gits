@@ -140,6 +140,7 @@ clone() {
         echo -e "Changing directory to ${BLUE}$repo_name${NC}"
         cd "$repo_name" || return 1
         echo -e "${GREEN}Current directory: $(pwd)${NC}"
+        echo "CHANGE_DIR=$(pwd)" >&2
     else
         echo -e "${RED}Error occurred while cloning the repository.${NC}"
         return 1
@@ -269,6 +270,12 @@ main() {
         clone)
             shift
             clone "$@"
+            new_dir=$(grep '^CHANGE_DIR=' /dev/stderr | cut -d= -f2)
+            if [ -n "$new_dir" ]; then
+                cd "$new_dir" || exit 1
+                echo -e "${GREEN}You are now in: $(pwd)${NC}"
+                exit 0
+            fi
             ;;
         install)
             install
@@ -288,4 +295,12 @@ main() {
 }
 
 # Run the main function
-main "$@"
+output=$(main "$@")
+echo "$output"
+
+# Check if we need to change directory
+new_dir=$(echo "$output" | grep '^CHANGE_DIR=' | cut -d= -f2)
+if [ -n "$new_dir" ]; then
+    cd "$new_dir" || exit 1
+    echo -e "${GREEN}You are now in: $(pwd)${NC}"
+fi
