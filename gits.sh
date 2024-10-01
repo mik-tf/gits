@@ -121,32 +121,6 @@ unrevert() {
     fi
 }
 
-# Function to clone a GitHub repository
-clone() {
-    if [ -z "$1" ]; then
-        echo -e "${RED}Error: Please provide a GitHub repository URL.${NC}"
-        echo -e "Usage: gits clone <github_url>"
-        echo -e "Example: gits clone https://github.com/org/repo"
-        return 1
-    fi
-
-    repo_url="$1"
-    repo_name=$(basename "$repo_url" .git)
-
-    echo -e "${GREEN}Cloning repository from $repo_url...${NC}"
-    
-    if git clone "$repo_url"; then
-        echo -e "${PURPLE}Repository cloned successfully.${NC}"
-        echo -e "Changing directory to ${BLUE}$repo_name${NC}"
-        cd "$repo_name" || return 1
-        echo -e "${GREEN}Current directory: $(pwd)${NC}"
-        echo "CHANGE_DIR=$(pwd)" >&2
-    else
-        echo -e "${RED}Error occurred while cloning the repository.${NC}"
-        return 1
-    fi
-}
-
 # Function to install the script
 install() {
     echo -e "${GREEN}Installing GitS...${NC}"
@@ -219,10 +193,6 @@ help() {
     echo -e "             ${BLUE}Actions:${NC} Undo the last revert if it hasn't been committed"
     echo -e "             ${BLUE}Example:${NC} gits unrevert"
     echo
-    echo -e "  ${GREEN}clone <github_url>${NC} Clone a GitHub repository"
-    echo -e "             ${BLUE}Actions:${NC} Clone the repository and change to its directory"
-    echo -e "             ${BLUE}Example:${NC} gits clone https://github.com/org/repo"
-    echo
     echo -e "  ${GREEN}install${NC}       Install GitS to /usr/local/bin (requires sudo)"
     echo -e "             ${BLUE}Example:${NC} gits install"
     echo
@@ -267,16 +237,6 @@ main() {
         unrevert)
             unrevert
             ;;
-        clone)
-            shift
-            clone "$@"
-            new_dir=$(grep '^CHANGE_DIR=' /dev/stderr | cut -d= -f2)
-            if [ -n "$new_dir" ]; then
-                cd "$new_dir" || exit 1
-                echo -e "${GREEN}You are now in: $(pwd)${NC}"
-                exit 0
-            fi
-            ;;
         install)
             install
             ;;
@@ -295,12 +255,4 @@ main() {
 }
 
 # Run the main function
-output=$(main "$@")
-echo "$output"
-
-# Check if we need to change directory
-new_dir=$(echo "$output" | grep '^CHANGE_DIR=' | cut -d= -f2)
-if [ -n "$new_dir" ]; then
-    cd "$new_dir" || exit 1
-    echo -e "${GREEN}You are now in: $(pwd)${NC}"
-fi
+main "$@"
