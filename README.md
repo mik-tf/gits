@@ -67,7 +67,7 @@ The `clone` function allows you to easily clone a GitHub repository:
 gits clone <repo>
 ```
 
-- `<repo>`: The Git repository URL or org/repo (default to Github URL).
+- `<repo>`: The Git repository URL or simply org/repo if it's on GitHub.
 - Example: `gits clone https://github.com/org/repo`
 - Example: `gits clone org/repo`
 

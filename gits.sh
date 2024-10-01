@@ -153,7 +153,7 @@ uninstall() {
 # Function to clone a GitHub repository
 clone() {
     if [ -z "$1" ]; then
-        echo -e "${RED}Error: Please provide a Git repository URL or org/repo (default to Github URL). ${NC}"
+        echo -e "${RED}Error: Please provide a Git repository URL or just the org/repo if it's on GitHub. ${NC}"
         echo -e "Usage: gits clone <https://github.com/org/repo> or <org/repo>"
         return 1
     fi
@@ -220,8 +220,8 @@ help() {
     echo
     echo -e "  ${GREEN}clone <repo>${NC}  Clone a GitHub repository"
     echo -e "             ${BLUE}Actions:${NC} Clone the repository, switch to the repo directory"
-    echo -e "             ${BLUE}Example:${NC} gits clone github.com/org/repo"
-    echo -e "             ${BLUE}Example:${NC} gits clone org/repo"
+    echo -e "             ${BLUE}Example:${NC} gits clone https://github.com/org/repo"
+    echo -e "             ${BLUE}Example:${NC} gits clone org/repo (default to GitHub URL)"
     echo
     echo -e "  ${GREEN}install${NC}       Install GitS to /usr/local/bin (requires sudo)"
     echo -e "             ${BLUE}Example:${NC} gits install"
