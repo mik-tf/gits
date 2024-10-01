@@ -6,7 +6,6 @@
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
-  - [Clone Function](#clone-function)
   - [Revert Function](#revert-function)
   - [Unrevert Function](#unrevert-function)
 - [Uninstallation](#uninstallation)
@@ -54,23 +53,9 @@ After installation, you can use GitS from any directory with the following comma
 - `gits new [name]`: Create a new branch and switch to it
 - `gits revert <number>`: Revert to a specified number of commits ago
 - `gits unrevert`: Cancel the last revert operation
-- `gits clone <github_url>`: Clone a GitHub repository
 - `gits help`: Display help information
 
 For detailed usage information, run `gits help`.
-
-### Clone Function
-
-The new `clone` function allows you to easily clone a GitHub repository:
-
-```bash
-gits clone <github_url>
-```
-
-- `<github_url>`: The URL of the GitHub repository you want to clone.
-- Example: `gits clone https://github.com/org/repo`
-
-This command clones the repository and automatically changes your current directory to the cloned repository's directory.
 
 ### Revert Function
 
