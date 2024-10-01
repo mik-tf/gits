@@ -153,8 +153,8 @@ uninstall() {
 # Function to clone a GitHub repository
 clone() {
     if [ -z "$1" ]; then
-        echo -e "${RED}Error: Please provide a GitHub repository URL or org/repo.${NC}"
-        echo -e "Usage: gits clone <github.com/org/repo> or <org/repo>"
+        echo -e "${RED}Error: Please provide a Git repository URL or org/repo (default to Github URL). ${NC}"
+        echo -e "Usage: gits clone <https://github.com/org/repo> or <org/repo>"
         return 1
     fi
 
