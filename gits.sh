@@ -227,6 +227,44 @@ pr_merge() {
 
         echo -e "\n${PURPLE}Merging Pull Request #$pr_number...${NC}"
         tea pr merge --repo "$repo" --title "$merge_title" --message "$merge_message" "$pr_number"
+
+        # Branch deletion option only for Gitea
+        echo -e "\n${GREEN}Would you like to delete the branch locally? (y/n)${NC}"
+        read delete_branch
+
+        if [[ $delete_branch == "y" ]]; then
+            echo -e "${GREEN}Enter branch name to delete:${NC}"
+            read branch_name
+            
+            # Get the default branch (usually main or master)
+            default_branch=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
+            
+            # If we couldn't get the default branch, ask the user
+            if [ -z "$default_branch" ]; then
+                echo -e "${GREEN}Enter the name of your main branch (main/master):${NC}"
+                read default_branch
+                default_branch=${default_branch:-main}
+            fi
+            
+            # Switch to the default branch first
+            if git checkout "$default_branch"; then
+                if git branch -d "$branch_name"; then
+                    echo -e "${PURPLE}Branch deleted locally.${NC}"
+                    
+                    echo -e "${GREEN}Push branch deletion to remote? (y/n)${NC}"
+                    read push_delete
+
+                    if [[ $push_delete == "y" ]]; then
+                        git push origin :"$branch_name"
+                        echo -e "${PURPLE}Branch deletion pushed to remote.${NC}"
+                    fi
+                else
+                    echo -e "${RED}Failed to delete branch locally.${NC}"
+                fi
+            else
+                echo -e "${RED}Failed to switch to $default_branch branch. Branch deletion aborted.${NC}"
+            fi
+        fi
     else
         # Show current PRs
         echo -e "${BLUE}Current Pull Requests:${NC}"
@@ -237,43 +275,7 @@ pr_merge() {
 
         echo -e "\n${PURPLE}Merging Pull Request #$pr_number...${NC}"
         gh pr merge "$pr_number"
-    fi
-
-    echo -e "\n${GREEN}Would you like to delete the branch locally? (y/n)${NC}"
-    read delete_branch
-
-    if [[ $delete_branch == "y" ]]; then
-        echo -e "${GREEN}Enter branch name to delete:${NC}"
-        read branch_name
-        
-        # Get the default branch (usually main or master)
-        default_branch=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
-        
-        # If we couldn't get the default branch, ask the user
-        if [ -z "$default_branch" ]; then
-            echo -e "${GREEN}Enter the name of your main branch (main/master):${NC}"
-            read default_branch
-            default_branch=${default_branch:-main}
-        fi
-        
-        # Switch to the default branch first
-        if git checkout "$default_branch"; then
-            if git branch -d "$branch_name"; then
-                echo -e "${PURPLE}Branch deleted locally.${NC}"
-                
-                echo -e "${GREEN}Push branch deletion to remote? (y/n)${NC}"
-                read push_delete
-
-                if [[ $push_delete == "y" ]]; then
-                    git push origin :"$branch_name"
-                    echo -e "${PURPLE}Branch deletion pushed to remote.${NC}"
-                fi
-            else
-                echo -e "${RED}Failed to delete branch locally.${NC}"
-            fi
-        else
-            echo -e "${RED}Failed to switch to $default_branch branch. Branch deletion aborted.${NC}"
-        fi
+        echo -e "${PURPLE}Note: GitHub automatically handles branch deletion during PR merge.${NC}"
     fi
 }
 
@@ -458,16 +460,16 @@ help() {
     echo -e "             ${BLUE}Example:${NC} gits pull"
     echo -e "             ${BLUE}Example:${NC} gits pull main"
     echo
+    echo -e "  ${GREEN}push${NC}          Rapidly stage, commit, and push changes"
+    echo -e "             ${BLUE}Actions:${NC} add all changes, prompt for commit message, commit, push"
+    echo -e "             ${BLUE}Note:${NC} Automatically sets upstream branch if not set"
+    echo -e "             ${BLUE}Example:${NC} gits push"
+    echo
     echo -e "  ${GREEN}pr <action>${NC}   Manage Pull Requests using Gitea Tea CLI"
     echo -e "             ${BLUE}Actions:${NC} create, close, merge"
     echo -e "             ${BLUE}Example:${NC} gits pr create (creates a new PR)"
     echo -e "             ${BLUE}Example:${NC} gits pr close (closes a PR)"
     echo -e "             ${BLUE}Example:${NC} gits pr merge (merges a PR)"
-    echo
-    echo -e "  ${GREEN}push${NC}          Rapidly stage, commit, and push changes"
-    echo -e "             ${BLUE}Actions:${NC} add all changes, prompt for commit message, commit, push"
-    echo -e "             ${BLUE}Note:${NC} Automatically sets upstream branch if not set"
-    echo -e "             ${BLUE}Example:${NC} gits push"
     echo
     echo -e "  ${GREEN}commit${NC}        Commit changes with a message"
     echo -e "             ${BLUE}Actions:${NC} prompt for commit message, commit"
