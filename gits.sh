@@ -334,22 +334,44 @@ commit() {
     git commit -m "$commit_message"
 }
 
-# Function to initialize a new Git repository and push to GitHub
+# Function to initialize a new Git repository and push to GitHub or Gitea
 init() {
-    echo -e "${GREEN}Initializing new Git repository and pushing to GitHub...${NC}"
+    echo -e "${GREEN}Which platform would you like to use?${NC}"
+    echo -e "1) Gitea (git.ourworld.tf)"
+    echo -e "2) GitHub (github.com)"
+    read -p "Enter your choice (1/2): " platform_choice
+
+    # Set platform-specific variables
+    case "$platform_choice" in
+        1)
+            git_url="https://git.ourworld.tf"
+            initial_branch="development"
+            platform="Gitea"
+            ;;
+        2)
+            git_url="https://github.com"
+            initial_branch="main"
+            platform="GitHub"
+            ;;
+        *)
+            echo -e "${RED}Invalid choice. Please select 1 for Gitea or 2 for GitHub.${NC}"
+            return 1
+            ;;
+    esac
+
+    echo -e "${GREEN}Initializing new Git repository...${NC}"
     
-    echo -e "Enter your GitHub username:"
-    read github_username
+    echo -e "Enter your $platform username:"
+    read username
     echo -e "Enter the repository name:"
     read repo_name
 
-    echo -e "${GREEN}Make sure to create a repository on GitHub with the proper username (${github_username}) and repository (${repo_name})${NC}"
+    echo -e "${GREEN}Make sure to create a repository on $platform with the proper username (${username}) and repository (${repo_name})${NC}"
     echo -e "Press Enter when you're ready to continue..."
     read
 
     git init
 
-    initial_branch="main"
     echo -e "${GREEN}Setting initial branch as '${initial_branch}'. Press ENTER to continue or type 'replace' to change the branch name:${NC}"
     read branch_choice
 
@@ -366,10 +388,10 @@ init() {
     read commit_message
     git commit -m "$commit_message"
 
-    git remote add origin "https://github.com/$github_username/$repo_name.git"
+    git remote add origin "$git_url/$username/$repo_name.git"
     git push -u origin $initial_branch
 
-    echo -e "${PURPLE}Repository initialized and pushed to GitHub successfully.${NC}"
+    echo -e "${PURPLE}Repository initialized and pushed to $platform successfully.${NC}"
     echo -e "Branch: ${BLUE}$initial_branch${NC}"
 }
 
@@ -541,8 +563,10 @@ help() {
     echo -e "             ${BLUE}Actions:${NC} prompt for commit message, commit"
     echo -e "             ${BLUE}Example:${NC} gits commit"
     echo
-    echo -e "  ${GREEN}init${NC}          Initialize a new Git repository and push to GitHub"
-    echo -e "             ${BLUE}Actions:${NC} init repo, create initial branch, add files, commit, push to GitHub"
+    echo -e "  ${GREEN}init${NC}          Initialize a new Git repository and push to GitHub or Gitea"
+    echo -e "             ${BLUE}Actions:${NC} Choose platform (Gitea/GitHub), init repo, create initial branch, add files, commit, push"
+    echo -e "             ${BLUE}Note:${NC} Default branch is 'development' for Gitea and 'main' for GitHub"
+    echo -e "             ${BLUE}Note:${NC} Gitea URL will be git.ourworld.tf"
     echo -e "             ${BLUE}Example:${NC} gits init"
     echo
     echo -e "  ${GREEN}new [name]${NC}    Create a new branch and switch to it"
