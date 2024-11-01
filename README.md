@@ -3,12 +3,15 @@
 <h2> Table of Contents</h2>
 
 - [Introduction](#introduction)
+- [Prerequisites](#prerequisites)
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
   - [Clone Function](#clone-function)
   - [Revert Function](#revert-function)
   - [Unrevert Function](#unrevert-function)
+  - [Platform Authentication](#platform-authentication)
+  - [Branch Deletion](#branch-deletion)
 - [Uninstallation](#uninstallation)
 - [Issues and Feature Requests](#issues-and-feature-requests)
 - [Contributing](#contributing)
@@ -18,16 +21,27 @@
 
 GitS is a bash script designed to streamline the Git workflow by combining common Git commands into quick, easy-to-use operations. It's perfect for developers who want to speed up their Git interactions and simplify their daily version control tasks.
 
+## Prerequisites
+
+To use GitS, you need:
+
+- [git](https://git-scm.com/) - Required for all git operations
+- [gh](https://cli.github.com/) - Required for GitHub PR management and authentication
+- [tea](https://gitea.com/gitea/tea) - Required for Gitea PR management and authentication
+
+Both `gh` and `tea` are only required if you plan to use their respective platform features.
+
 ## Features
 
 - **Quick Pull**: Combines checkout, stash, fetch, pull, and status operations.
 - **Rapid Push**: Stages all changes, prompts for a commit message, commits, and pushes in one command.
 - **Easy Commit**: Quickly commit changes with a custom message.
+- **Pull Request Management**: Create, close, and merge PRs for both GitHub and Gitea.
+- **Platform Authentication**: Login and logout functionality for both GitHub and Gitea.
+- **Branch Management**: Create, delete, and manage branches easily.
 - **Repository Initialization**: Initialize a new Git repository and push it to GitHub.
-- **Branch Creation**: Create and switch to a new branch easily.
-- **Commit Revert**: Revert to a specified number of commits ago.
-- **Unrevert**: Cancel the last revert operation.
-- **Clone**: Easily clone a GitHub repository and switch to its directory.
+- **Commit Management**: Revert to previous commits and undo reverts.
+- **Repository Cloning**: Easily clone repositories and switch to their directory.
 - **Easy Installation**: Simple install and uninstall process.
 - **User-Friendly**: Colorized output and helpful error messages.
 
@@ -47,7 +61,10 @@ This will copy the script to `/usr/local/bin/gits`, making it accessible system-
 
 After installation, you can use GitS from any directory with the following commands:
 
-- `gits pr <create|close|merge>`: Create, close or merge a pull request
+- `gits login`: Login to GitHub or Gitea
+- `gits logout`: Logout from GitHub or Gitea
+- `gits pr <create|close|merge>`: Manage pull requests on GitHub or Gitea
+- `gits delete [branch-name]`: Delete a local branch and optionally from remote
 - `gits pull [branch]`: Quickly update your local repository
 - `gits push`: Rapidly stage, commit, and push changes
 - `gits commit`: Commit changes with a custom message
@@ -97,6 +114,31 @@ gits unrevert
 ```
 
 This command cancels the last revert if it hasn't been committed yet. It's useful if you accidentally revert changes and want to undo the revert operation.
+
+### Platform Authentication
+
+The `login` and `logout` functions allow you to manage your authentication with GitHub and Gitea:
+
+```bash
+gits login   # Login to GitHub or Gitea
+gits logout  # Logout from GitHub or Gitea
+```
+
+These commands will prompt you to choose between GitHub and Gitea and handle the authentication process accordingly.
+
+### Branch Deletion
+
+The `delete` function provides a safe way to delete branches:
+
+```bash
+gits delete [branch-name]
+```
+
+- If no branch name is provided, shows current branches and prompts for one
+- Prevents deletion of the default branch
+- Automatically switches to the default branch if needed
+- Offers force deletion for branches with unmerged changes
+- Provides option to delete the branch from remote
 
 ## Uninstallation
 
