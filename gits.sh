@@ -8,6 +8,31 @@ RED='\033[0;31m'
 ORANGE='\033[38;5;208m'
 NC='\033[0m' # No Color
 
+# Function to clone a GitHub repository
+clone() {
+    if [ -z "$1" ]; then
+        echo -e "${RED}Error: Please provide a Git repository URL or just the org/repo if it's on GitHub. ${NC}"
+        echo -e "Usage: gits clone <https://github.com/org/repo> or <org/repo>"
+        return 1
+    fi
+
+    local repo="$1"
+    if [[ $repo != http* ]]; then
+        repo="https://github.com/$repo"
+    fi
+
+    echo -e "${GREEN}Cloning repository: $repo${NC}"
+    if git clone "$repo"; then
+        local repo_name=$(basename "$repo" .git)
+        cd "$repo_name"
+        echo -e "${PURPLE}Repository cloned successfully. Switched to directory: $(pwd)${NC}"
+        echo -e '\nHit [Ctrl]+[D] to exit this child shell.'
+        exec bash
+    else
+        echo -e "${RED}Error: Failed to clone the repository.${NC}"
+    fi
+}
+
 # Function to delete a branch
 delete() {
     # If branch name is provided as argument, use it; otherwise ask
@@ -392,6 +417,72 @@ unrevert() {
     fi
 }
 
+# Function to handle login
+login() {
+    echo -e "${GREEN}Which platform would you like to login to?${NC}"
+    echo -e "1) Gitea"
+    echo -e "2) GitHub"
+    read -p "Enter your choice (1/2): " platform_choice
+
+    case "$platform_choice" in
+        1)
+            echo -e "${PURPLE}Logging into Gitea...${NC}"
+            tea login add
+            if [ $? -eq 0 ]; then
+                echo -e "${GREEN}Successfully logged into Gitea.${NC}"
+            else
+                echo -e "${RED}Failed to login to Gitea.${NC}"
+            fi
+            ;;
+        2)
+            echo -e "${PURPLE}Logging into GitHub...${NC}"
+            gh auth login
+            if [ $? -eq 0 ]; then
+                echo -e "${GREEN}Successfully logged into GitHub.${NC}"
+            else
+                echo -e "${RED}Failed to login to GitHub.${NC}"
+            fi
+            ;;
+        *)
+            echo -e "${RED}Invalid choice. Please select 1 for Gitea or 2 for GitHub.${NC}"
+            return 1
+            ;;
+    esac
+}
+
+# Function to handle logout
+logout() {
+    echo -e "${GREEN}Which platform would you like to logout from?${NC}"
+    echo -e "1) Gitea"
+    echo -e "2) GitHub"
+    read -p "Enter your choice (1/2): " platform_choice
+
+    case "$platform_choice" in
+        1)
+            echo -e "${PURPLE}Logging out from Gitea...${NC}"
+            tea logout
+            if [ $? -eq 0 ]; then
+                echo -e "${GREEN}Successfully logged out from Gitea.${NC}"
+            else
+                echo -e "${RED}Failed to logout from Gitea.${NC}"
+            fi
+            ;;
+        2)
+            echo -e "${PURPLE}Logging out from GitHub...${NC}"
+            gh auth logout
+            if [ $? -eq 0 ]; then
+                echo -e "${GREEN}Successfully logged out from GitHub.${NC}"
+            else
+                echo -e "${RED}Failed to logout from GitHub.${NC}"
+            fi
+            ;;
+        *)
+            echo -e "${RED}Invalid choice. Please select 1 for Gitea or 2 for GitHub.${NC}"
+            return 1
+            ;;
+    esac
+}
+
 # Function to install the script
 install() {
     echo -e "${GREEN}Installing GitS...${NC}"
@@ -418,31 +509,6 @@ uninstall() {
     else
         echo -e "${RED}Error: Failed to obtain sudo privileges. Uninstallation aborted.${NC}"
         exit 1
-    fi
-}
-
-# Function to clone a GitHub repository
-clone() {
-    if [ -z "$1" ]; then
-        echo -e "${RED}Error: Please provide a Git repository URL or just the org/repo if it's on GitHub. ${NC}"
-        echo -e "Usage: gits clone <https://github.com/org/repo> or <org/repo>"
-        return 1
-    fi
-
-    local repo="$1"
-    if [[ $repo != http* ]]; then
-        repo="https://github.com/$repo"
-    fi
-
-    echo -e "${GREEN}Cloning repository: $repo${NC}"
-    if git clone "$repo"; then
-        local repo_name=$(basename "$repo" .git)
-        cd "$repo_name"
-        echo -e "${PURPLE}Repository cloned successfully. Switched to directory: $(pwd)${NC}"
-        echo -e '\nHit [Ctrl]+[D] to exit this child shell.'
-        exec bash
-    else
-        echo -e "${RED}Error: Failed to clone the repository.${NC}"
     fi
 }
 
@@ -506,6 +572,14 @@ help() {
     echo -e "             ${BLUE}Example:${NC} gits clone https://github.com/org/repo"
     echo -e "             ${BLUE}Example:${NC} gits clone org/repo (default to GitHub URL)"
     echo
+    echo -e "  ${GREEN}login${NC}         Login to Gitea or GitHub"
+    echo -e "             ${BLUE}Actions:${NC} Interactive login to selected platform"
+    echo -e "             ${BLUE}Example:${NC} gits login"
+    echo
+    echo -e "  ${GREEN}logout${NC}        Logout from Gitea or GitHub"
+    echo -e "             ${BLUE}Actions:${NC} Logout from selected platform"
+    echo -e "             ${BLUE}Example:${NC} gits logout"
+    echo
     echo -e "  ${GREEN}install${NC}       Install GitS to /usr/local/bin (requires sudo)"
     echo -e "             ${BLUE}Example:${NC} gits install"
     echo
@@ -526,6 +600,12 @@ main() {
     fi
 
     case "$1" in
+        login)
+            login
+            ;;
+        logout)
+            logout
+            ;;
         pr)
             shift
             pr "$@"
