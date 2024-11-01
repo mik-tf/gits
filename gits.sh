@@ -8,6 +8,115 @@ RED='\033[0;31m'
 ORANGE='\033[38;5;208m'
 NC='\033[0m' # No Color
 
+# Function to handle pull request operations
+pr() {
+    if [ -z "$1" ]; then
+        echo -e "${RED}Error: Please specify an action (create/close/merge)${NC}"
+        echo -e "Usage: gits pr <create|close|merge>"
+        return 1
+    fi
+
+    case "$1" in
+        create)
+            pr_create
+            ;;
+        close)
+            pr_close
+            ;;
+        merge)
+            pr_merge
+            ;;
+        *)
+            echo -e "${RED}Invalid action. Use create, close, or merge${NC}"
+            return 1
+            ;;
+    esac
+}
+
+# Function to create a pull request
+pr_create() {
+    # Show current PRs
+    echo -e "${BLUE}Current Pull Requests:${NC}"
+    tea pr
+
+    # Get repository details
+    echo -e "\n${GREEN}Enter repository (organization/repository):${NC}"
+    read repo
+
+    echo -e "${GREEN}Enter Pull Request title:${NC}"
+    read title
+
+    echo -e "${GREEN}Enter base branch (default: development):${NC}"
+    read base
+    base=${base:-development}
+
+    echo -e "${GREEN}Enter head branch:${NC}"
+    read head
+
+    echo -e "\n${PURPLE}Creating Pull Request...${NC}"
+    tea pull create --repo "$repo" --title "$title" --base "$base" --head "$head"
+}
+
+# Function to close a pull request
+pr_close() {
+    # Show current PRs
+    echo -e "${BLUE}Current Pull Requests:${NC}"
+    tea pr
+
+    echo -e "\n${GREEN}Enter repository (organization/repository):${NC}"
+    read repo
+
+    echo -e "${GREEN}Enter PR number to close:${NC}"
+    read pr_number
+
+    echo -e "\n${PURPLE}Closing Pull Request #$pr_number...${NC}"
+    tea pr close "$pr_number" --repo "$repo"
+}
+
+# Function to merge a pull request
+pr_merge() {
+    # Show current PRs
+    echo -e "${BLUE}Current Pull Requests:${NC}"
+    tea pr
+
+    echo -e "\n${GREEN}Enter repository (organization/repository):${NC}"
+    read repo
+
+    echo -e "${GREEN}Enter PR number to merge:${NC}"
+    read pr_number
+
+    echo -e "${GREEN}Enter merge commit title:${NC}"
+    read merge_title
+
+    echo -e "${GREEN}Enter merge commit message:${NC}"
+    read merge_message
+
+    echo -e "\n${PURPLE}Merging Pull Request #$pr_number...${NC}"
+    tea pr merge --repo "$repo" --title "$merge_title" --message "$merge_message" "$pr_number"
+
+    echo -e "\n${GREEN}Would you like to delete the branch locally? (y/n)${NC}"
+    read delete_branch
+
+    if [[ $delete_branch == "y" ]]; then
+        echo -e "${GREEN}Enter branch name to delete:${NC}"
+        read branch_name
+        
+        if git branch -d "$branch_name"; then
+            echo -e "${PURPLE}Branch deleted locally.${NC}"
+            
+            echo -e "${GREEN}Push branch deletion to remote? (y/n)${NC}"
+            read push_delete
+
+            if [[ $push_delete == "y" ]]; then
+                git push origin :"$branch_name"
+                echo -e "${PURPLE}Branch deletion pushed to remote.${NC}"
+            fi
+        else
+            echo -e "${RED}Failed to delete branch locally.${NC}"
+        fi
+    fi
+}
+
 # Function to perform git pull operations
 pull() {
     local branch=${1:-development}
@@ -189,6 +298,12 @@ help() {
     echo -e "             ${BLUE}Example:${NC} gits pull"
     echo -e "             ${BLUE}Example:${NC} gits pull main"
     echo
+    echo -e "  ${GREEN}pr <action>${NC}   Manage Pull Requests using Gitea Tea CLI"
+    echo -e "             ${BLUE}Actions:${NC} create, close, merge"
+    echo -e "             ${BLUE}Example:${NC} gits pr create (creates a new PR)"
+    echo -e "             ${BLUE}Example:${NC} gits pr close (closes a PR)"
+    echo -e "             ${BLUE}Example:${NC} gits pr merge (merges a PR)"
+    echo
     echo -e "  ${GREEN}push${NC}          Rapidly stage, commit, and push changes"
     echo -e "             ${BLUE}Actions:${NC} add all changes, prompt for commit message, commit, push"
     echo -e "             ${BLUE}Note:${NC} Automatically sets upstream branch if not set"
@@ -243,6 +358,10 @@ main() {
     fi
 
     case "$1" in
+        pr)
+            shift
+            pr "$@"
+            ;;
         pull)
             shift
             pull "$@"

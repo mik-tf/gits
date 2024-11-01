@@ -47,6 +47,7 @@ This will copy the script to `/usr/local/bin/gits`, making it accessible system-
 
 After installation, you can use GitS from any directory with the following commands:
 
+- `gits pr <create|close|merge>`: Create, close or merge a pull request
 - `gits pull [branch]`: Quickly update your local repository
 - `gits push`: Rapidly stage, commit, and push changes
 - `gits commit`: Commit changes with a custom message
