@@ -8,6 +8,93 @@ RED='\033[0;31m'
 ORANGE='\033[38;5;208m'
 NC='\033[0m' # No Color
 
+# Function to delete a branch
+delete() {
+    # If branch name is provided as argument, use it; otherwise ask
+    if [ -z "$1" ]; then
+        # Show all branches first
+        echo -e "${BLUE}Current branches:${NC}"
+        git branch -a
+        
+        echo -e "\n${GREEN}Enter branch name to delete:${NC}"
+        read branch_name
+    else
+        branch_name="$1"
+    fi
+
+    # Get the default branch (usually main or master)
+    default_branch=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
+    
+    # If we couldn't get the default branch, ask the user
+    if [ -z "$default_branch" ]; then
+        echo -e "${GREEN}Enter the name of your main branch (main/master):${NC}"
+        read default_branch
+        default_branch=${default_branch:-main}
+    fi
+    
+    # Check if the branch exists
+    if ! git show-ref --verify --quiet refs/heads/"$branch_name"; then
+        echo -e "${RED}Error: Branch '$branch_name' does not exist locally.${NC}"
+        return 1
+    fi
+
+    # Don't allow deletion of the default branch
+    if [ "$branch_name" = "$default_branch" ]; then
+        echo -e "${RED}Error: Cannot delete the default branch ($default_branch).${NC}"
+        return 1
+    fi
+    
+    # Switch to the default branch first if needed
+    current_branch=$(git rev-parse --abbrev-ref HEAD)
+    if [ "$current_branch" = "$branch_name" ]; then
+        echo -e "${PURPLE}Switching to $default_branch before deletion...${NC}"
+        if ! git checkout "$default_branch"; then
+            echo -e "${RED}Failed to switch to $default_branch branch. Branch deletion aborted.${NC}"
+            return 1
+        fi
+    fi
+
+    # Try to delete the branch
+    if git branch -d "$branch_name"; then
+        echo -e "${PURPLE}Branch deleted locally.${NC}"
+        
+        echo -e "${GREEN}Push branch deletion to remote? (y/n)${NC}"
+        read push_delete
+
+        if [[ $push_delete == "y" ]]; then
+            if git push origin :"$branch_name"; then
+                echo -e "${PURPLE}Branch deletion pushed to remote.${NC}"
+            else
+                echo -e "${RED}Failed to delete remote branch. It might not exist or you may not have permission.${NC}"
+            fi
+        fi
+    else
+        echo -e "${RED}Failed to delete branch locally.${NC}"
+        echo -e "${ORANGE}If the branch has unmerged changes, use -D instead of -d to force deletion.${NC}"
+        echo -e "${GREEN}Would you like to force delete the branch? (y/n)${NC}"
+        read force_delete
+        
+        if [[ $force_delete == "y" ]]; then
+            if git branch -D "$branch_name"; then
+                echo -e "${PURPLE}Branch force deleted locally.${NC}"
+                
+                echo -e "${GREEN}Push branch deletion to remote? (y/n)${NC}"
+                read push_delete
+
+                if [[ $push_delete == "y" ]]; then
+                    if git push origin :"$branch_name"; then
+                        echo -e "${PURPLE}Branch deletion pushed to remote.${NC}"
+                    else
+                        echo -e "${RED}Failed to delete remote branch. It might not exist or you may not have permission.${NC}"
+                    fi
+                fi
+            else
+                echo -e "${RED}Failed to force delete the branch.${NC}"
+            fi
+        fi
+    fi
+}
+
 # Function to handle pull request operations
 pr() {
     if [ -z "$1" ]; then
@@ -16,15 +103,21 @@ pr() {
         return 1
     fi
 
+    # Ask user which platform to use
+    echo -e "${GREEN}Which platform would you like to use?${NC}"
+    echo -e "1) Gitea"
+    echo -e "2) GitHub"
+    read -p "Enter your choice (1/2): " platform_choice
+
     case "$1" in
         create)
-            pr_create
+            pr_create "$platform_choice"
             ;;
         close)
-            pr_close
+            pr_close "$platform_choice"
             ;;
         merge)
-            pr_merge
+            pr_merge "$platform_choice"
             ;;
         *)
             echo -e "${RED}Invalid action. Use create, close, or merge${NC}"
@@ -35,64 +128,116 @@ pr() {
 
 # Function to create a pull request
 pr_create() {
-    # Show current PRs
-    echo -e "${BLUE}Current Pull Requests:${NC}"
-    tea pr
+    local platform_choice=$1
 
-    # Get repository details
-    echo -e "\n${GREEN}Enter repository (organization/repository):${NC}"
-    read repo
+    if [ "$platform_choice" = "1" ]; then
+        # Show current PRs
+        echo -e "${BLUE}Current Pull Requests:${NC}"
+        tea pr
 
-    echo -e "${GREEN}Enter Pull Request title:${NC}"
-    read title
+        # Get repository details
+        echo -e "\n${GREEN}Enter repository (organization/repository):${NC}"
+        read repo
 
-    echo -e "${GREEN}Enter base branch (default: development):${NC}"
-    read base
-    base=${base:-development}
+        echo -e "${GREEN}Enter Pull Request title:${NC}"
+        read title
 
-    echo -e "${GREEN}Enter head branch:${NC}"
-    read head
+        echo -e "${GREEN}Enter base branch (default: development):${NC}"
+        read base
+        base=${base:-development}
 
-    echo -e "\n${PURPLE}Creating Pull Request...${NC}"
-    tea pull create --repo "$repo" --title "$title" --base "$base" --head "$head"
+        echo -e "${GREEN}Enter head branch:${NC}"
+        read head
+
+        echo -e "\n${PURPLE}Creating Pull Request...${NC}"
+        tea pull create --repo "$repo" --title "$title" --base "$base" --head "$head"
+    else
+        # GitHub PR creation
+        echo -e "${BLUE}Current Pull Requests:${NC}"
+        gh pr list
+
+        echo -e "${GREEN}Enter Pull Request title:${NC}"
+        read title
+
+        echo -e "${GREEN}Enter base branch (default: main):${NC}"
+        read base
+        base=${base:-main}
+
+        echo -e "${GREEN}Enter head branch:${NC}"
+        read head
+
+        echo -e "${GREEN}Enter PR description:${NC}"
+        read description
+
+        echo -e "\n${PURPLE}Creating Pull Request...${NC}"
+        gh pr create --base "$base" --head "$head" --title "$title" --body "$description"
+    fi
 }
 
 # Function to close a pull request
 pr_close() {
-    # Show current PRs
-    echo -e "${BLUE}Current Pull Requests:${NC}"
-    tea pr
+    local platform_choice=$1
 
-    echo -e "\n${GREEN}Enter repository (organization/repository):${NC}"
-    read repo
+    if [ "$platform_choice" = "1" ]; then
+        # Show current PRs
+        echo -e "${BLUE}Current Pull Requests:${NC}"
+        tea pr
 
-    echo -e "${GREEN}Enter PR number to close:${NC}"
-    read pr_number
+        echo -e "\n${GREEN}Enter repository (organization/repository):${NC}"
+        read repo
 
-    echo -e "\n${PURPLE}Closing Pull Request #$pr_number...${NC}"
-    tea pr close "$pr_number" --repo "$repo"
+        echo -e "${GREEN}Enter PR number to close:${NC}"
+        read pr_number
+
+        echo -e "\n${PURPLE}Closing Pull Request #$pr_number...${NC}"
+        tea pr close "$pr_number" --repo "$repo"
+    else
+        # Show current PRs
+        echo -e "${BLUE}Current Pull Requests:${NC}"
+        gh pr list
+
+        echo -e "${GREEN}Enter PR number to close:${NC}"
+        read pr_number
+
+        echo -e "\n${PURPLE}Closing Pull Request #$pr_number...${NC}"
+        gh pr close "$pr_number"
+    fi
 }
 
 # Function to merge a pull request
 pr_merge() {
-    # Show current PRs
-    echo -e "${BLUE}Current Pull Requests:${NC}"
-    tea pr
+    local platform_choice=$1
 
-    echo -e "\n${GREEN}Enter repository (organization/repository):${NC}"
-    read repo
+    if [ "$platform_choice" = "1" ]; then
+        # Show current PRs
+        echo -e "${BLUE}Current Pull Requests:${NC}"
+        tea pr
 
-    echo -e "${GREEN}Enter PR number to merge:${NC}"
-    read pr_number
+        echo -e "\n${GREEN}Enter repository (organization/repository):${NC}"
+        read repo
 
-    echo -e "${GREEN}Enter merge commit title:${NC}"
-    read merge_title
+        echo -e "${GREEN}Enter PR number to merge:${NC}"
+        read pr_number
 
-    echo -e "${GREEN}Enter merge commit message:${NC}"
-    read merge_message
+        echo -e "${GREEN}Enter merge commit title:${NC}"
+        read merge_title
 
-    echo -e "\n${PURPLE}Merging Pull Request #$pr_number...${NC}"
-    tea pr merge --repo "$repo" --title "$merge_title" --message "$merge_message" "$pr_number"
+        echo -e "${GREEN}Enter merge commit message:${NC}"
+        read merge_message
+
+        echo -e "\n${PURPLE}Merging Pull Request #$pr_number...${NC}"
+        tea pr merge --repo "$repo" --title "$merge_title" --message "$merge_message" "$pr_number"
+    else
+        # Show current PRs
+        echo -e "${BLUE}Current Pull Requests:${NC}"
+        gh pr list
+
+        echo -e "${GREEN}Enter PR number to merge:${NC}"
+        read pr_number
+
+        echo -e "\n${PURPLE}Merging Pull Request #$pr_number...${NC}"
+        gh pr merge "$pr_number"
+    fi
 
     echo -e "\n${GREEN}Would you like to delete the branch locally? (y/n)${NC}"
     read delete_branch
@@ -101,18 +246,33 @@ pr_merge() {
         echo -e "${GREEN}Enter branch name to delete:${NC}"
         read branch_name
         
-        if git branch -d "$branch_name"; then
-            echo -e "${PURPLE}Branch deleted locally.${NC}"
-            
-            echo -e "${GREEN}Push branch deletion to remote? (y/n)${NC}"
-            read push_delete
+        # Get the default branch (usually main or master)
+        default_branch=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
+        
+        # If we couldn't get the default branch, ask the user
+        if [ -z "$default_branch" ]; then
+            echo -e "${GREEN}Enter the name of your main branch (main/master):${NC}"
+            read default_branch
+            default_branch=${default_branch:-main}
+        fi
+        
+        # Switch to the default branch first
+        if git checkout "$default_branch"; then
+            if git branch -d "$branch_name"; then
+                echo -e "${PURPLE}Branch deleted locally.${NC}"
+                
+                echo -e "${GREEN}Push branch deletion to remote? (y/n)${NC}"
+                read push_delete
 
-            if [[ $push_delete == "y" ]]; then
-                git push origin :"$branch_name"
-                echo -e "${PURPLE}Branch deletion pushed to remote.${NC}"
+                if [[ $push_delete == "y" ]]; then
+                    git push origin :"$branch_name"
+                    echo -e "${PURPLE}Branch deletion pushed to remote.${NC}"
+                fi
+            else
+                echo -e "${RED}Failed to delete branch locally.${NC}"
             fi
         else
-            echo -e "${RED}Failed to delete branch locally.${NC}"
+            echo -e "${RED}Failed to switch to $default_branch branch. Branch deletion aborted.${NC}"
         fi
     fi
 }
@@ -323,6 +483,12 @@ help() {
     echo -e "             ${BLUE}Example:${NC} gits new"
     echo -e "             ${BLUE}Example:${NC} gits new feature-branch"
     echo
+    echo -e "  ${GREEN}delete [branch-name]${NC} Delete a local branch and optionally delete it from remote"
+    echo -e "             ${BLUE}Actions:${NC} Switch to default branch, delete specified branch, optionally delete from remote"
+    echo -e "             ${BLUE}Note:${NC} If no branch name is provided, you'll be prompted to enter one"
+    echo -e "             ${BLUE}Example:${NC} gits delete"
+    echo -e "             ${BLUE}Example:${NC} gits delete feature-branch"
+    echo
     echo -e "  ${GREEN}revert <number>${NC} Revert to a specified number of commits ago"
     echo -e "             ${BLUE}Actions:${NC} revert changes to the state X commits ago, stage changes"
     echo -e "             ${BLUE}Note:${NC} Changes are staged but not committed automatically"
@@ -361,6 +527,10 @@ main() {
         pr)
             shift
             pr "$@"
+            ;;
+        delete)
+            shift
+            delete "$@"
             ;;
         pull)
             shift
