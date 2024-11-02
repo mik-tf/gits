@@ -638,9 +638,12 @@ install() {
         sudo chown root:root /usr/local/bin/gits
         sudo chmod 755 /usr/local/bin/gits
 
+        echo
         echo -e "${PURPLE}GitS has been installed successfully.${NC}"
         echo -e "You can now use ${GREEN}gits${NC} command from anywhere."
+        echo
         echo -e "Use ${BLUE}gits help${NC} to see the commands."
+        echo
     else
         echo -e "${RED}Error: Failed to obtain sudo privileges. Installation aborted.${NC}"
         exit 1
@@ -649,10 +652,12 @@ install() {
 
 # Function to uninstall the script
 uninstall() {
+    echo
     echo -e "${GREEN}Uninstalling GitS...${NC}"
     if sudo -v; then
         sudo rm -f /usr/local/bin/gits
         echo -e "${PURPLE}GitS has been uninstalled successfully.${NC}"
+        echo
     else
         echo -e "${RED}Error: Failed to obtain sudo privileges. Uninstallation aborted.${NC}"
         exit 1
@@ -664,7 +669,10 @@ help() {
     echo -e "${ORANGE}    GitS - Git Speed    ${NC}"
     echo -e "${ORANGE}═══════════════════════${NC}\n"
     echo -e "${PURPLE}Description:${NC} GitS is a Bash CLI tool for speeding up common git/gh/tea operations by combining multiple commands."
+    echo -e "${PURPLE}License:${NC} Apache 2.0"
+    echo -e "${PURPLE}Code:${NC} https://github.com/Mik-TF/gits.git"
     echo -e "${PURPLE}Usage:${NC} gits <command>"
+    
     echo
     echo -e "${PURPLE}Available commands:${NC}"
     echo -e "  ${GREEN}pull [branch]${NC} Quickly update your local repository"
