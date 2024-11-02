@@ -663,7 +663,7 @@ help() {
     echo -e "\n${ORANGE}═══════════════════════${NC}"
     echo -e "${ORANGE}    GitS - Git Speed    ${NC}"
     echo -e "${ORANGE}═══════════════════════${NC}\n"
-    echo -e "${PURPLE}Description:${NC} GitS is a tool for quickly combining git commands to speed up your workflow."
+    echo -e "${PURPLE}Description:${NC} GitS is a tool written in Bash for quickly combining git commands to speed up your workflow."
     echo -e "${PURPLE}Usage:${NC} gits <command>"
     echo
     echo -e "${PURPLE}Available commands:${NC}"
