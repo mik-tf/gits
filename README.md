@@ -4,8 +4,15 @@
 
 - [Introduction](#introduction)
 - [Prerequisites](#prerequisites)
-- [Features](#features)
 - [Installation](#installation)
+  - [Using Make](#using-make)
+  - [Manual Installation](#manual-installation)
+  - [Reinstalling](#reinstalling)
+- [Uninstallation](#uninstallation)
+  - [Using Make (Recommended)](#using-make-recommended)
+  - [Manual Uninstallation](#manual-uninstallation)
+- [Features](#features)
+- [Installation](#installation-1)
 - [Usage](#usage)
   - [Authentication](#authentication)
   - [Repository Management](#repository-management)
@@ -18,7 +25,7 @@
   - [Platform-Specific Features](#platform-specific-features)
     - [Gitea](#gitea)
     - [GitHub](#github)
-- [Uninstallation](#uninstallation)
+- [Uninstallation](#uninstallation-1)
 - [Issues and Feature Requests](#issues-and-feature-requests)
 - [Contributing](#contributing)
 - [License](#license)
@@ -34,8 +41,61 @@ To use GitS, you need:
 - [git](https://git-scm.com/) - Required for all git operations
 - [gh](https://cli.github.com/) - Required for GitHub PR management and authentication
 - [tea](https://gitea.com/gitea/tea) - Required for Gitea PR management and authentication
+- Makefile (optional)
 
 Both `gh` and `tea` are only required if you plan to use their respective platform features.
+
+## Installation
+
+There are two ways to install GitS:
+
+### Using Make
+
+If you have `make` installed, you can simply run:
+
+```bash
+git clone https://github.com/Mik-TF/gits.git
+cd gits
+make build
+```
+
+### Manual Installation
+
+Alternatively, you can install directly using the script:
+
+```bash
+git clone https://github.com/Mik-TF/gits.git
+cd gits
+bash ./gits.sh install
+```
+
+Both methods will copy the script to `/usr/local/bin/gits`, making it accessible system-wide. You'll need to enter your sudo password.
+
+### Reinstalling
+
+If you need to reinstall GitS, you can use the following:
+
+```bash
+make rebuild
+```
+
+## Uninstallation
+
+You can uninstall GitS in two ways:
+
+### Using Make (Recommended)
+
+```bash
+make delete
+```
+
+### Manual Uninstallation
+
+```bash
+gits uninstall
+```
+
+Both methods will remove the script from `/usr/local/bin/gits`. You'll need to enter your sudo password.
 
 ## Features
 
