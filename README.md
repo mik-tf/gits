@@ -6,12 +6,7 @@
 - [Features](#features)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
-  - [Using Make](#using-make)
-  - [Manual Installation](#manual-installation)
-  - [Reinstalling](#reinstalling)
-- [Uninstallation](#uninstallation)
-  - [Using Make](#using-make-1)
-  - [Manual Uninstallation](#manual-uninstallation)
+- [Using Makefile](#using-makefile)
 - [Usage](#usage)
   - [Authentication](#authentication)
   - [Repository Management](#repository-management)
@@ -24,6 +19,7 @@
   - [Platform-Specific Features](#platform-specific-features)
     - [Gitea](#gitea)
     - [GitHub](#github)
+- [Uninstallation](#uninstallation)
 - [Issues and Feature Requests](#issues-and-feature-requests)
 - [Contributing](#contributing)
 - [License](#license)
@@ -67,55 +63,32 @@ Both `gh` and `tea` are only required if you plan to use their respective platfo
 
 ## Installation
 
-There are two ways to install GitS:
-
-### Using Make
-
 If you have `make` installed, you can simply run:
 
 ```bash
 git clone https://github.com/Mik-TF/gits.git
 cd gits
-make build
+bash gits.sh install
 ```
 
-### Manual Installation
+This will copy the script to `/usr/local/bin/gits`, making it accessible system-wide. You'll need to enter your sudo password.
 
-Alternatively, you can install directly using the script:
+## Using Makefile
 
-```bash
-git clone https://github.com/Mik-TF/gits.git
-cd gits
-bash ./gits.sh install
-```
+For development purpose, we set 3 basic Makefile commands that are useful to run within the repo if you are working on an updated version of Gits.
 
-Both methods will copy the script to `/usr/local/bin/gits`, making it accessible system-wide. You'll need to enter your sudo password.
-
-### Reinstalling
-
-If you need to reinstall GitS, you can use the following:
-
-```bash
-make rebuild
-```
-
-## Uninstallation
-
-You can uninstall GitS in two ways:
-
-### Using Make
-
-```bash
-make delete
-```
-
-### Manual Uninstallation
-
-```bash
-gits uninstall
-```
-
-Both methods will remove the script from `/usr/local/bin/gits`. You'll need to enter your sudo password.
+- Build
+  ```
+  make build
+  ```
+- Rebuild
+  ```
+  make rebuild
+  ```
+- Uninstall
+  ```
+  make delete
+  ```
 
 ## Usage
 
@@ -211,6 +184,16 @@ After installation, you can use GitS with the following commands:
 - Enhanced PR descriptions
 
 For detailed usage information and examples, run `gits help`.
+
+## Uninstallation
+
+To remove GitS from your system, run:
+
+```bash
+gits uninstall
+```
+
+This will remove the script from `/usr/local/bin/gits`. You'll need to enter your sudo password.
 
 ## Issues and Feature Requests
 
