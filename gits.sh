@@ -669,9 +669,9 @@ help() {
     echo -e "${ORANGE}    GitS - Git Speed    ${NC}"
     echo -e "${ORANGE}═══════════════════════${NC}\n"
     echo -e "${PURPLE}Description:${NC} GitS is a Bash CLI tool for speeding up common git/gh/tea operations by combining multiple commands."
+    echo -e "${PURPLE}Usage:${NC} gits <command>"
     echo -e "${PURPLE}License:${NC} Apache 2.0"
     echo -e "${PURPLE}Code:${NC} https://github.com/Mik-TF/gits.git"
-    echo -e "${PURPLE}Usage:${NC} gits <command>"
     
     echo
     echo -e "${PURPLE}Available commands:${NC}"
