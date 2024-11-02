@@ -334,6 +334,131 @@ commit() {
     git commit -m "$commit_message"
 }
 
+# Function to handle repository operations
+repo() {
+    if [ -z "$1" ]; then
+        echo -e "${RED}Error: Please specify an action (create/delete)${NC}"
+        echo -e "Usage: gits repo <create|delete>"
+        return 1
+    fi
+
+    case "$1" in
+        create)
+            repo_create
+            ;;
+        delete)
+            repo_delete
+            ;;
+        *)
+            echo -e "${RED}Invalid action. Use create or delete${NC}"
+            return 1
+            ;;
+    esac
+}
+
+# Function to create a repository
+repo_create() {
+    echo -e "${GREEN}Which platform would you like to use?${NC}"
+    echo -e "1) Gitea"
+    echo -e "2) GitHub"
+    read -p "Enter your choice (1/2): " platform_choice
+
+    echo -e "${GREEN}Enter repository name:${NC}"
+    read repo_name
+
+    echo -e "${GREEN}Enter repository description:${NC}"
+    read description
+
+    echo -e "${GREEN}Make repository private? (y/n):${NC}"
+    read is_private
+
+    case "$platform_choice" in
+        1)
+            visibility=""
+            if [[ $is_private == "y" ]]; then
+                visibility="--private"
+            else
+                visibility="--public"
+            fi
+
+            echo -e "\n${PURPLE}Creating repository on Gitea...${NC}"
+            if tea repo create --name "$repo_name" --description "$description" $visibility; then
+                echo -e "${GREEN}Repository created successfully on Gitea!${NC}"
+            else
+                echo -e "${RED}Failed to create repository on Gitea.${NC}"
+            fi
+            ;;
+        2)
+            visibility=""
+            if [[ $is_private == "y" ]]; then
+                visibility="--private"
+            else
+                visibility="--public"
+            fi
+
+            echo -e "\n${PURPLE}Creating repository on GitHub...${NC}"
+            if gh repo create "$repo_name" --description "$description" $visibility --confirm; then
+                echo -e "${GREEN}Repository created successfully on GitHub!${NC}"
+            else
+                echo -e "${RED}Failed to create repository on GitHub.${NC}"
+            fi
+            ;;
+        *)
+            echo -e "${RED}Invalid choice. Please select 1 for Gitea or 2 for GitHub.${NC}"
+            return 1
+            ;;
+    esac
+}
+
+# Function to delete a repository
+repo_delete() {
+    echo -e "${GREEN}Which platform would you like to use?${NC}"
+    echo -e "1) Gitea"
+    echo -e "2) GitHub"
+    read -p "Enter your choice (1/2): " platform_choice
+
+    case "$platform_choice" in
+        1)
+            echo -e "${GREEN}Enter repository (organization/repository):${NC}"
+            read repo_name
+
+            echo -e "${RED}WARNING: This action cannot be undone!${NC}"
+            echo -e "${GREEN}Are you sure you want to delete $repo_name? (y/n):${NC}"
+            read confirm
+
+            if [[ $confirm == "y" ]]; then
+                echo -e "\n${PURPLE}Deleting repository from Gitea...${NC}"
+                if tea repo delete "$repo_name" --confirm; then
+                    echo -e "${GREEN}Repository deleted successfully from Gitea!${NC}"
+                else
+                    echo -e "${RED}Failed to delete repository from Gitea.${NC}"
+                fi
+            fi
+            ;;
+        2)
+            echo -e "${GREEN}Enter repository name:${NC}"
+            read repo_name
+
+            echo -e "${RED}WARNING: This action cannot be undone!${NC}"
+            echo -e "${GREEN}Are you sure you want to delete $repo_name? (y/n):${NC}"
+            read confirm
+
+            if [[ $confirm == "y" ]]; then
+                echo -e "\n${PURPLE}Deleting repository from GitHub...${NC}"
+                if gh repo delete "$repo_name" --confirm; then
+                    echo -e "${GREEN}Repository deleted successfully from GitHub!${NC}"
+                else
+                    echo -e "${RED}Failed to delete repository from GitHub.${NC}"
+                fi
+            fi
+            ;;
+        *)
+            echo -e "${RED}Invalid choice. Please select 1 for Gitea or 2 for GitHub.${NC}"
+            return 1
+            ;;
+    esac
+}
+
 # Function to initialize a new Git repository and push to GitHub or Gitea
 init() {
     echo -e "${GREEN}Which platform would you like to use?${NC}"
@@ -563,6 +688,11 @@ help() {
     echo -e "             ${BLUE}Actions:${NC} prompt for commit message, commit"
     echo -e "             ${BLUE}Example:${NC} gits commit"
     echo
+    echo -e "  ${GREEN}repo <action>${NC}  Manage repositories"
+    echo -e "             ${BLUE}Actions:${NC} create, delete"
+    echo -e "             ${BLUE}Example:${NC} gits repo create (creates a new repository)"
+    echo -e "             ${BLUE}Example:${NC} gits repo delete (deletes a repository)"
+    echo
     echo -e "  ${GREEN}init${NC}          Initialize a new Git repository and push to GitHub or Gitea"
     echo -e "             ${BLUE}Actions:${NC} Choose platform (Gitea/GitHub), init repo, create initial branch, add files, commit, push"
     echo -e "             ${BLUE}Note:${NC} Default branch is 'development' for Gitea and 'main' for GitHub"
@@ -629,6 +759,10 @@ main() {
             ;;
         logout)
             logout
+            ;;
+        repo)
+            shift
+            repo "$@"
             ;;
         pr)
             shift
