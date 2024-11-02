@@ -6,7 +6,6 @@
 - [Features](#features)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
-- [Using Makefile](#using-makefile)
 - [Usage](#usage)
   - [Authentication](#authentication)
   - [Repository Management](#repository-management)
@@ -19,9 +18,9 @@
   - [Platform-Specific Features](#platform-specific-features)
     - [Gitea](#gitea)
     - [GitHub](#github)
-- [Uninstallation](#uninstallation)
 - [Issues and Feature Requests](#issues-and-feature-requests)
 - [Contributing](#contributing)
+- [Using Makefile](#using-makefile)
 - [License](#license)
 
 ## Introduction
@@ -72,23 +71,6 @@ bash gits.sh install
 ```
 
 This will copy the script to `/usr/local/bin/gits`, making it accessible system-wide. You'll need to enter your sudo password.
-
-## Using Makefile
-
-For development purpose, we set 3 basic Makefile commands that are useful to run within the repo if you are working on an updated version of Gits.
-
-- Build
-  ```
-  make build
-  ```
-- Rebuild
-  ```
-  make rebuild
-  ```
-- Uninstall
-  ```
-  make delete
-  ```
 
 ## Usage
 
@@ -165,8 +147,8 @@ After installation, you can use GitS with the following commands:
   - Useful for accidental reverts
 
 ### Installation Management
-- `bash gits.sh install` - Install GitS system-wide
-- `gits uninstall` - Remove GitS from system
+- `bash gits.sh install` - Install GitS system-wide (`cd` in the Gits CLI repo)
+- `gits uninstall` - Remove GitS from the system
 - `gits help` - Display detailed help information
 
 ### Platform-Specific Features
@@ -184,16 +166,6 @@ After installation, you can use GitS with the following commands:
 - Enhanced PR descriptions
 
 For detailed usage information and examples, run `gits help`.
-
-## Uninstallation
-
-To remove GitS from your system, run:
-
-```bash
-gits uninstall
-```
-
-This will remove the script from `/usr/local/bin/gits`. You'll need to enter your sudo password.
 
 ## Issues and Feature Requests
 
@@ -216,6 +188,23 @@ Contributions are welcome! If you'd like to contribute:
 3. Commit your changes (`git commit -m 'Write a commit message'`)
 4. Push to the branch (`git push origin development_some_details`)
 5. Open a Pull Request
+
+## Using Makefile
+
+For development purpose, we set 3 basic Makefile commands that are useful to run within the repo if you are working on an updated version of Gits.
+
+- Build
+  ```
+  make build
+  ```
+- Rebuild
+  ```
+  make rebuild
+  ```
+- Uninstall
+  ```
+  make delete
+  ```
 
 ## License
 
