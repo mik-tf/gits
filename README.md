@@ -3,6 +3,7 @@
 <h2> Table of Contents</h2>
 
 - [Introduction](#introduction)
+- [Features](#features)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
   - [Using Make](#using-make)
@@ -11,8 +12,6 @@
 - [Uninstallation](#uninstallation)
   - [Using Make](#using-make-1)
   - [Manual Uninstallation](#manual-uninstallation)
-- [Features](#features)
-- [Installation](#installation-1)
 - [Usage](#usage)
   - [Authentication](#authentication)
   - [Repository Management](#repository-management)
@@ -25,7 +24,6 @@
   - [Platform-Specific Features](#platform-specific-features)
     - [Gitea](#gitea)
     - [GitHub](#github)
-- [Uninstallation](#uninstallation-1)
 - [Issues and Feature Requests](#issues-and-feature-requests)
 - [Contributing](#contributing)
 - [License](#license)
@@ -33,6 +31,28 @@
 ## Introduction
 
 GitS is a bash script designed to streamline the git workflow by combining common git, gh and tea commands into quick, easy-to-use operations. It's perfect for developers who want to speed up their Git interactions and simplify their daily version control tasks.
+
+## Features
+
+- **Quick Pull**: Combines checkout, stash, fetch, pull, and status operations.
+- **Rapid Push**: Stages all changes, prompts for a commit message, commits, and pushes in one command.
+- **Easy Commit**: Quickly commit changes with a custom message.
+- **Pull Request Management**: Create, close, and merge PRs for both GitHub and Gitea.
+- **Platform Authentication**: Login and logout functionality for both GitHub and Gitea.
+- **Branch Management**: Create, delete, and manage branches easily.
+- **Repository Initialization**: Initialize a new Git repository and push it to GitHub.
+- **Commit Management**: Revert to previous commits and undo reverts.
+- **Repository Cloning**: Easily clone repositories and switch to their directory.
+- **Easy Installation**: Simple install and uninstall process.
+- **User-Friendly**: Colorized output and helpful error messages.
+- **Repository Management**: Create and delete repositories on both GitHub and Gitea
+- **Multiple Platform Support**: Seamless integration with both GitHub and Gitea
+- **Branch Creation**: Create new branches with custom names
+- **Default Branch Handling**: Automatic detection and handling of default branches
+- **Force Delete Options**: Safe branch deletion with force delete capabilities
+- **Pull Request Workflow**: Complete PR lifecycle management including creation, closing, and merging
+- **Merge Commit Control**: Custom merge commit messages and titles
+- **Branch Cleanup**: Automatic branch cleanup options after PR merges
 
 ## Prerequisites
 
@@ -96,40 +116,6 @@ gits uninstall
 ```
 
 Both methods will remove the script from `/usr/local/bin/gits`. You'll need to enter your sudo password.
-
-## Features
-
-- **Quick Pull**: Combines checkout, stash, fetch, pull, and status operations.
-- **Rapid Push**: Stages all changes, prompts for a commit message, commits, and pushes in one command.
-- **Easy Commit**: Quickly commit changes with a custom message.
-- **Pull Request Management**: Create, close, and merge PRs for both GitHub and Gitea.
-- **Platform Authentication**: Login and logout functionality for both GitHub and Gitea.
-- **Branch Management**: Create, delete, and manage branches easily.
-- **Repository Initialization**: Initialize a new Git repository and push it to GitHub.
-- **Commit Management**: Revert to previous commits and undo reverts.
-- **Repository Cloning**: Easily clone repositories and switch to their directory.
-- **Easy Installation**: Simple install and uninstall process.
-- **User-Friendly**: Colorized output and helpful error messages.
-- **Repository Management**: Create and delete repositories on both GitHub and Gitea
-- **Multiple Platform Support**: Seamless integration with both GitHub and Gitea
-- **Branch Creation**: Create new branches with custom names
-- **Default Branch Handling**: Automatic detection and handling of default branches
-- **Force Delete Options**: Safe branch deletion with force delete capabilities
-- **Pull Request Workflow**: Complete PR lifecycle management including creation, closing, and merging
-- **Merge Commit Control**: Custom merge commit messages and titles
-- **Branch Cleanup**: Automatic branch cleanup options after PR merges
-
-## Installation
-
-To install GitS, simply clone the repository and use the install command:
-
-```bash
-git clone https://github.com/Mik-TF/gits.git
-cd gits
-bash ./gits.sh install
-```
-
-This will copy the script to `/usr/local/bin/gits`, making it accessible system-wide. You'll need to enter your sudo password.
 
 ## Usage
 
@@ -225,16 +211,6 @@ After installation, you can use GitS with the following commands:
 - Enhanced PR descriptions
 
 For detailed usage information and examples, run `gits help`.
-
-## Uninstallation
-
-To remove GitS from your system, run:
-
-```bash
-gits uninstall
-```
-
-This will remove the script from `/usr/local/bin/gits`. You'll need to enter your sudo password.
 
 ## Issues and Feature Requests
 
