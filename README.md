@@ -9,7 +9,7 @@
   - [Manual Installation](#manual-installation)
   - [Reinstalling](#reinstalling)
 - [Uninstallation](#uninstallation)
-  - [Using Make (Recommended)](#using-make-recommended)
+  - [Using Make](#using-make-1)
   - [Manual Uninstallation](#manual-uninstallation)
 - [Features](#features)
 - [Installation](#installation-1)
@@ -83,7 +83,7 @@ make rebuild
 
 You can uninstall GitS in two ways:
 
-### Using Make (Recommended)
+### Using Make
 
 ```bash
 make delete
