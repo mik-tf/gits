@@ -7,6 +7,11 @@
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
+  - [Repository Management](#repository-management)
+  - [Pull Request Management](#pull-request-management)
+  - [Platform-Specific Features](#platform-specific-features)
+    - [Gitea Specific:](#gitea-specific)
+    - [GitHub Specific:](#github-specific)
   - [Clone Function](#clone-function)
   - [Revert Function](#revert-function)
   - [Unrevert Function](#unrevert-function)
@@ -44,6 +49,14 @@ Both `gh` and `tea` are only required if you plan to use their respective platfo
 - **Repository Cloning**: Easily clone repositories and switch to their directory.
 - **Easy Installation**: Simple install and uninstall process.
 - **User-Friendly**: Colorized output and helpful error messages.
+- **Repository Management**: Create and delete repositories on both GitHub and Gitea
+- **Multiple Platform Support**: Seamless integration with both GitHub and Gitea
+- **Branch Creation**: Create new branches with custom names
+- **Default Branch Handling**: Automatic detection and handling of default branches
+- **Force Delete Options**: Safe branch deletion with force delete capabilities
+- **Pull Request Workflow**: Complete PR lifecycle management including creation, closing, and merging
+- **Merge Commit Control**: Custom merge commit messages and titles
+- **Branch Cleanup**: Automatic branch cleanup options after PR merges
 
 ## Installation
 
@@ -76,6 +89,50 @@ After installation, you can use GitS from any directory with the following comma
 - `gits help`: Display help information
 
 For detailed usage information, run `gits help`.
+
+### Repository Management
+
+The `repo` command allows you to create and delete repositories:
+
+```bash
+gits repo create  # Create a new repository
+gits repo delete  # Delete an existing repository
+```
+
+Both commands support GitHub and Gitea platforms and provide interactive prompts for:
+- Repository name
+- Description
+- Privacy settings
+- Confirmation for deletion
+
+### Pull Request Management
+
+The `pr` command provides comprehensive PR management:
+
+```bash
+gits pr create  # Create a new pull request
+gits pr close   # Close an existing pull request
+gits pr merge   # Merge a pull request
+```
+
+Features include:
+- Platform selection (GitHub/Gitea)
+- Custom PR titles and descriptions
+- Base and head branch selection
+- Merge commit customization
+- Optional branch cleanup after merge
+
+### Platform-Specific Features
+
+#### Gitea Specific:
+- Uses `git.ourworld.tf` as the default Gitea server
+- Default branch is set to 'development'
+- Custom merge commit messages
+
+#### GitHub Specific:
+- Default branch is set to 'main'
+- Automatic branch deletion after PR merge
+- Integration with GitHub CLI features
 
 ### Clone Function
 
