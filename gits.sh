@@ -632,6 +632,7 @@ logout() {
 
 # Function to install the script
 install() {
+    echo
     echo -e "${GREEN}Installing GitS...${NC}"
     if sudo -v; then
         sudo cp "$0" /usr/local/bin/gits
