@@ -7,16 +7,17 @@
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
+  - [Authentication](#authentication)
   - [Repository Management](#repository-management)
+  - [Repository Setup](#repository-setup)
+  - [Branch Management](#branch-management)
+  - [Basic Git Operations](#basic-git-operations)
   - [Pull Request Management](#pull-request-management)
+  - [Commit Management](#commit-management)
+  - [Installation Management](#installation-management)
   - [Platform-Specific Features](#platform-specific-features)
-    - [Gitea Specific:](#gitea-specific)
-    - [GitHub Specific:](#github-specific)
-  - [Clone Function](#clone-function)
-  - [Revert Function](#revert-function)
-  - [Unrevert Function](#unrevert-function)
-  - [Platform Authentication](#platform-authentication)
-  - [Branch Deletion](#branch-deletion)
+    - [Gitea](#gitea)
+    - [GitHub](#github)
 - [Uninstallation](#uninstallation)
 - [Issues and Feature Requests](#issues-and-feature-requests)
 - [Contributing](#contributing)
@@ -72,130 +73,98 @@ This will copy the script to `/usr/local/bin/gits`, making it accessible system-
 
 ## Usage
 
-After installation, you can use GitS from any directory with the following commands:
+After installation, you can use GitS with the following commands:
 
-- `gits login`: Login to GitHub or Gitea
-- `gits logout`: Logout from GitHub or Gitea
-- `gits pr <create|close|merge>`: Manage pull requests on GitHub or Gitea
-- `gits delete [branch-name]`: Delete a local branch and optionally from remote
-- `gits pull [branch]`: Quickly update your local repository
-- `gits push`: Rapidly stage, commit, and push changes
-- `gits commit`: Commit changes with a custom message
-- `gits init`: Initialize a new Git repository and push to GitHub
-- `gits new [name]`: Create a new branch and switch to it
-- `gits revert <number>`: Revert to a specified number of commits ago
-- `gits unrevert`: Cancel the last revert operation
-- `gits clone <repo>`: Clone a GitHub repository
-- `gits help`: Display help information
-
-For detailed usage information, run `gits help`.
+### Authentication
+- `gits login` - Login to GitHub or Gitea
+- `gits logout` - Logout from GitHub or Gitea
 
 ### Repository Management
+- `gits repo create` - Create a new repository
+  - Interactive prompts for:
+    - Platform selection (GitHub/Gitea)
+    - Repository name
+    - Description
+    - Privacy settings
+- `gits repo delete` - Delete an existing repository
+  - Interactive prompts for:
+    - Platform selection
+    - Repository name
+    - Confirmation
 
-The `repo` command allows you to create and delete repositories:
+  ### Repository Setup
+  - `gits init` - Initialize a new Git repository
+    - Platform selection (GitHub/Gitea)
+    - Default branch configuration
+    - Initial commit setup
+    - Remote repository linking
+  - `gits clone <repo>` - Clone a repository
+    - Supports full URLs or GitHub shorthand (org/repo)
+    - Automatic directory switching
 
-```bash
-gits repo create  # Create a new repository
-gits repo delete  # Delete an existing repository
-```
+    
+### Branch Management
+- `gits new [branch-name]` - Create and switch to a new branch
+  - Optional branch name argument
+  - Interactive prompt if no name provided
+- `gits delete [branch-name]` - Delete a branch
+  - Optional branch name argument
+  - Safe deletion with force option
+  - Remote deletion option
+  - Prevents default branch deletion
 
-Both commands support GitHub and Gitea platforms and provide interactive prompts for:
-- Repository name
-- Description
-- Privacy settings
-- Confirmation for deletion
+### Basic Git Operations
+- `gits pull [branch]` - Update your local repository
+  - Combines: checkout, stash, fetch, pull, status
+  - Default branch is 'development'
+- `gits push` - Stage and push changes
+  - Stages all changes
+  - Prompts for commit message
+  - Sets upstream branch if needed
+- `gits commit` - Commit changes with a message
+  - Prompts for commit message
 
 ### Pull Request Management
+- `gits pr create` - Create a new pull request
+  - Platform selection (GitHub/Gitea)
+  - Custom title and description
+  - Base and head branch selection
+- `gits pr close` - Close an existing pull request
+  - Shows current PRs
+  - Interactive PR selection
+- `gits pr merge` - Merge a pull request
+  - Custom merge commit messages
+  - Branch cleanup options
+  - Platform-specific merge handling
 
-The `pr` command provides comprehensive PR management:
 
-```bash
-gits pr create  # Create a new pull request
-gits pr close   # Close an existing pull request
-gits pr merge   # Merge a pull request
-```
+### Commit Management
+- `gits revert <number>` - Revert to previous commits
+  - Specify number of commits to revert
+  - Stages changes without committing
+- `gits unrevert` - Cancel the last revert operation
+  - Useful for accidental reverts
 
-Features include:
-- Platform selection (GitHub/Gitea)
-- Custom PR titles and descriptions
-- Base and head branch selection
-- Merge commit customization
-- Optional branch cleanup after merge
+### Installation Management
+- `bash gits.sh install` - Install GitS system-wide
+- `gits uninstall` - Remove GitS from system
+- `gits help` - Display detailed help information
 
 ### Platform-Specific Features
 
-#### Gitea Specific:
-- Uses `git.ourworld.tf` as the default Gitea server
-- Default branch is set to 'development'
+#### Gitea
+- Default server: git.ourworld.tf
+- Default branch: development
 - Custom merge commit messages
+- Manual branch cleanup options
 
-#### GitHub Specific:
-- Default branch is set to 'main'
+#### GitHub
+- Default branch: main
 - Automatic branch deletion after PR merge
-- Integration with GitHub CLI features
+- GitHub CLI integration
+- Enhanced PR descriptions
 
-### Clone Function
-
-The `clone` function allows you to easily clone a GitHub repository:
-
-```bash
-gits clone <repo>
-```
-
-- `<repo>`: The Git repository URL or simply org/repo if it's on GitHub.
-- Example: `gits clone https://github.com/org/repo`
-- Example: `gits clone org/repo`
-
-This command clones the repository and switches to the newly cloned directory.
-
-### Revert Function
-
-The `revert` function allows you to easily revert to a previous state:
-
-```bash
-gits revert <number>
-```
-
-- `<number>`: The number of commits to go back.
-- Example: `gits revert 1` reverts the last commit
-- Example: `gits revert 3` reverts to 3 commits ago
-
-This command stages the revert changes but does not automatically commit them, allowing you to review the changes before committing.
-
-### Unrevert Function
-
-The `unrevert` function allows you to cancel the last revert operation:
-
-```bash
-gits unrevert
-```
-
-This command cancels the last revert if it hasn't been committed yet. It's useful if you accidentally revert changes and want to undo the revert operation.
-
-### Platform Authentication
-
-The `login` and `logout` functions allow you to manage your authentication with GitHub and Gitea:
-
-```bash
-gits login   # Login to GitHub or Gitea
-gits logout  # Logout from GitHub or Gitea
-```
-
-These commands will prompt you to choose between GitHub and Gitea and handle the authentication process accordingly.
-
-### Branch Deletion
-
-The `delete` function provides a safe way to delete branches:
-
-```bash
-gits delete [branch-name]
-```
-
-- If no branch name is provided, shows current branches and prompts for one
-- Prevents deletion of the default branch
-- Automatically switches to the default branch if needed
-- Offers force deletion for branches with unmerged changes
-- Provides option to delete the branch from remote
+For detailed usage information and examples, run `gits help`.
 
 ## Uninstallation
 
@@ -217,7 +186,7 @@ We use GitHub issues to track bugs and feature requests. If you encounter any pr
 
 - **Questions**: If you have questions about using GitS, feel free to open an issue as well. We're here to help!
 
-To create an issue, visit the [Issues page](https://github.com/Mik-TF/git_speed/issues) of our GitHub repository.
+To create an issue, visit the [Issues page](https://github.com/Mik-TF/gits/issues) of our GitHub repository.
 
 ## Contributing
 
