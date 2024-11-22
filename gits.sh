@@ -33,32 +33,56 @@ clone() {
     fi
 }
 
-# Function to clone all repositories for a GitHub username via SSH
+# Function to clone all repositories for a GitHub/Gitea username via SSH
 clone-all() {
     if [ -z "$1" ]; then
-        echo -e "${RED}Error: Please provide a GitHub username.${NC}"
-        echo -e "Usage: gits clone-all <github-username>"
+        echo -e "${RED}Error: Please provide a username.${NC}"
+        echo -e "Usage: gits clone-all <username>"
         return 1
     fi
 
-    local GITHUB_USERNAME="$1"
+    echo -e "${GREEN}Which platform would you like to use?${NC}"
+    echo -e "1) Gitea"
+    echo -e "2) GitHub"
+    read -p "Enter your choice (1/2): " platform_choice
+
+    local USERNAME="$1"
+
+    # Set platform-specific variables
+    case "$platform_choice" in
+        1)
+            git_url="git@git.ourworld.tf"
+            ;;
+        2)
+            git_url="git@github.com"
+            ;;
+        *)
+            echo -e "${RED}Invalid choice. Please select 1 for Gitea or 2 for GitHub.${NC}"
+            return 1
+            ;;
+    esac
 
     # Create a directory for cloning
-    mkdir -p "$GITHUB_USERNAME"
-    cd "$GITHUB_USERNAME" || return 1
+    mkdir -p "$USERNAME"
+    cd "$USERNAME" || return 1
 
-    echo -e "${GREEN}Cloning all repositories for GitHub user: $GITHUB_USERNAME${NC}"
+    echo -e "${GREEN}Cloning all repositories for user: $USERNAME${NC}"
 
     # Track successful and failed clones
     local successful_clones=0
     local failed_clones=0
     local total_repos=0
 
-    # Fetch repository list using GitHub API with pagination
+    # Fetch repository list using platform-specific API with pagination
     local page=1
     while true; do
-        # Fetch repositories for the current page
-        local REPOS_JSON=$(curl -s "https://api.github.com/users/$GITHUB_USERNAME/repos?per_page=100&page=$page")
+        # Fetch repositories for the current page based on platform
+        local REPOS_JSON
+        if [ "$platform_choice" = "1" ]; then
+            REPOS_JSON=$(curl -s "https://git.ourworld.tf/api/v1/users/$USERNAME/repos?per_page=100&page=$page")
+        else
+            REPOS_JSON=$(curl -s "https://api.github.com/users/$USERNAME/repos?per_page=100&page=$page")
+        fi
         
         # Extract repository names
         local REPOS=$(echo "$REPOS_JSON" | jq -r '.[].name')
@@ -84,7 +108,7 @@ clone-all() {
             echo -e "${PURPLE}Cloning $repo...${NC}"
             
             # Attempt to clone via SSH
-            if git clone "git@github.com:$GITHUB_USERNAME/$repo.git" "$safe_repo"; then
+            if git clone "$git_url:$USERNAME/$repo.git" "$safe_repo"; then
                 ((successful_clones++))
                 echo -e "${GREEN}Completed cloning $repo${NC}"
             else
