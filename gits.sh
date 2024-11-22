@@ -33,6 +33,80 @@ clone() {
     fi
 }
 
+# Function to clone all repositories for a GitHub username via SSH
+clone-all() {
+    if [ -z "$1" ]; then
+        echo -e "${RED}Error: Please provide a GitHub username.${NC}"
+        echo -e "Usage: gits clone-all <github-username>"
+        return 1
+    fi
+
+    local GITHUB_USERNAME="$1"
+
+    # Create a directory for cloning
+    mkdir -p "$GITHUB_USERNAME"
+    cd "$GITHUB_USERNAME" || return 1
+
+    echo -e "${GREEN}Cloning all repositories for GitHub user: $GITHUB_USERNAME${NC}"
+
+    # Track successful and failed clones
+    local successful_clones=0
+    local failed_clones=0
+    local total_repos=0
+
+    # Fetch repository list using GitHub API with pagination
+    local page=1
+    while true; do
+        # Fetch repositories for the current page
+        local REPOS_JSON=$(curl -s "https://api.github.com/users/$GITHUB_USERNAME/repos?per_page=100&page=$page")
+        
+        # Extract repository names
+        local REPOS=$(echo "$REPOS_JSON" | jq -r '.[].name')
+        
+        # Break if no more repositories
+        if [ -z "$REPOS" ]; then
+            break
+        fi
+        
+        # Clone each repository
+        for repo in $REPOS; do
+            ((total_repos++))
+            
+            # Sanitize repository name
+            local safe_repo=$(echo "$repo" | sed 's/[^a-zA-Z0-9._-]/_/g')
+            
+            # Skip if repository directory already exists
+            if [ -d "$safe_repo" ]; then
+                echo -e "${ORANGE}Repository $repo already exists. Skipping...${NC}"
+                continue
+            fi
+            
+            echo -e "${PURPLE}Cloning $repo...${NC}"
+            
+            # Attempt to clone via SSH
+            if git clone "git@github.com:$GITHUB_USERNAME/$repo.git" "$safe_repo"; then
+                ((successful_clones++))
+                echo -e "${GREEN}Completed cloning $repo${NC}"
+            else
+                ((failed_clones++))
+                echo -e "${RED}Failed to clone $repo${NC}"
+            fi
+        done
+        
+        # Increment page number
+        ((page++))
+    done
+
+    # Display summary
+    echo -e "\n${BLUE}Cloning Summary:${NC}"
+    echo -e "Total Repositories: ${total_repos}"
+    echo -e "${GREEN}Successfully Cloned: ${successful_clones}${NC}"
+    echo -e "${RED}Failed to Clone: ${failed_clones}${NC}"
+    
+    # Return to original directory
+    cd - > /dev/null
+}
+
 # Function to delete a branch
 delete() {
     # If branch name is provided as argument, use it; otherwise ask
@@ -808,6 +882,10 @@ main() {
         clone)
             shift
             clone "$@"
+            ;;
+        clone-all)
+            shift
+            clone-all "$@"
             ;;
         install)
             install
