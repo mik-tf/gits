@@ -374,9 +374,37 @@ pull() {
 
 # Function to perform git push operations
 push() {
+    local branch=""
+    local commit_message=""
+
+    # If arguments are provided
+    if [ $# -gt 0 ]; then
+        # First argument is the branch
+        branch="$1"
+        shift
+        
+        # Remaining arguments form the commit message
+        if [ $# -gt 0 ]; then
+            commit_message="$*"
+        fi
+    fi
+
+    # If branch was provided, checkout to it
+    if [ ! -z "$branch" ]; then
+        if ! git checkout "$branch"; then
+            echo -e "${RED}Failed to checkout branch: $branch${NC}"
+            return 1
+        fi
+    fi
+
     git add .
-    echo "Enter commit message:"
-    read commit_message
+
+    # If no commit message was provided in arguments, prompt for it
+    if [ -z "$commit_message" ]; then
+        echo "Enter commit message:"
+        read commit_message
+    fi
+
     git commit -m "$commit_message"
 
     current_branch=$(git rev-parse --abbrev-ref HEAD)
@@ -848,7 +876,8 @@ main() {
             pull "$@"
             ;;
         push)
-            push
+            shift
+            push "$@"
             ;;
         commit)
             commit
