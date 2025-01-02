@@ -766,11 +766,13 @@ help() {
     
     echo
     echo -e "${PURPLE}Available commands:${NC}"
-    echo -e "  ${GREEN}pull [branch]${NC} Quickly update your local repository"
-    echo -e "             ${BLUE}Actions:${NC} checkout branch, stash changes, fetch, pull, show status"
-    echo -e "             ${BLUE}Note:${NC} If no branch is specified, it defaults to 'development'"
-    echo -e "             ${BLUE}Example:${NC} gits pull"
-    echo -e "             ${BLUE}Example:${NC} gits pull main"
+echo -e "  ${GREEN}push [branch] [commit-message]${NC} Rapidly stage, commit, and push changes"
+echo -e "             ${BLUE}Actions:${NC} add all changes, commit with message, push"
+echo -e "             ${BLUE}Note:${NC} Automatically sets upstream branch if not set"
+echo -e "             ${BLUE}Note:${NC} If no commit message is provided, you'll be prompted to enter one"
+echo -e "             ${BLUE}Example:${NC} gits push"
+echo -e "             ${BLUE}Example:${NC} gits push main"
+echo -e "             ${BLUE}Example:${NC} gits push main \"Initial commit\""
     echo
     echo -e "  ${GREEN}push${NC}          Rapidly stage, commit, and push changes"
     echo -e "             ${BLUE}Actions:${NC} add all changes, prompt for commit message, commit, push"
