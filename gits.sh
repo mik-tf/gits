@@ -756,95 +756,93 @@ uninstall() {
 }
 
 help() {
-    echo -e "\n${ORANGE}═══════════════════════${NC}"
-    echo -e "${ORANGE}    GitS - Git Speed    ${NC}"
-    echo -e "${ORANGE}═══════════════════════${NC}\n"
-    echo -e "${PURPLE}Description:${NC} GitS is a Bash CLI tool for speeding up common git/gh/tea operations by combining multiple commands."
-    echo -e "${PURPLE}Usage:${NC} gits <command>"
-    echo -e "${PURPLE}License:${NC} Apache 2.0"
-    echo -e "${PURPLE}Code:${NC} https://github.com/Mik-TF/gits.git"
+    echo -e "\n${ORANGE}═══════════════════════════════════════════${NC}"
+    echo -e "${ORANGE}              GitS - Git Speed              ${NC}"
+    echo -e "${ORANGE}═══════════════════════════════════════════${NC}\n"
     
-    echo
+    echo -e "${PURPLE}Description:${NC} GitS is a Bash CLI tool for speeding up common git/gh/tea operations by combining multiple commands."
+    echo -e "${PURPLE}Usage:${NC}       gits <command>"
+    echo -e "${PURPLE}License:${NC}      Apache 2.0"
+    echo -e "${PURPLE}Code:${NC}         https://github.com/Mik-TF/gits.git\n"
+    
     echo -e "${PURPLE}Available commands:${NC}"
-echo -e "  ${GREEN}push [branch] [commit-message]${NC} Rapidly stage, commit, and push changes"
-echo -e "             ${BLUE}Actions:${NC} add all changes, commit with message, push"
-echo -e "             ${BLUE}Note:${NC} Automatically sets upstream branch if not set"
-echo -e "             ${BLUE}Note:${NC} If no commit message is provided, you'll be prompted to enter one"
-echo -e "             ${BLUE}Example:${NC} gits push"
-echo -e "             ${BLUE}Example:${NC} gits push main"
-echo -e "             ${BLUE}Example:${NC} gits push main \"Initial commit\" (Quotes optional)"
-    echo
-    echo -e "  ${GREEN}push${NC}          Rapidly stage, commit, and push changes"
-    echo -e "             ${BLUE}Actions:${NC} add all changes, prompt for commit message, commit, push"
-    echo -e "             ${BLUE}Note:${NC} Automatically sets upstream branch if not set"
-    echo -e "             ${BLUE}Example:${NC} gits push"
-    echo
-    echo -e "  ${GREEN}pr <action>${NC}   Manage Pull Requests using Gitea Tea CLI"
-    echo -e "             ${BLUE}Actions:${NC} create, close, merge"
-    echo -e "             ${BLUE}Example:${NC} gits pr create (creates a new PR)"
-    echo -e "             ${BLUE}Example:${NC} gits pr close (closes a PR)"
-    echo -e "             ${BLUE}Example:${NC} gits pr merge (merges a PR)"
-    echo
-    echo -e "  ${GREEN}commit${NC}        Commit changes with a message"
-    echo -e "             ${BLUE}Actions:${NC} prompt for commit message, commit"
-    echo -e "             ${BLUE}Example:${NC} gits commit"
-    echo
-    echo -e "  ${GREEN}repo <action>${NC}  Manage repositories"
-    echo -e "             ${BLUE}Actions:${NC} create, delete"
-    echo -e "             ${BLUE}Example:${NC} gits repo create (creates a new repository)"
-    echo -e "             ${BLUE}Example:${NC} gits repo delete (deletes a repository)"
-    echo
-    echo -e "  ${GREEN}init${NC}          Initialize a new Git repository and push to GitHub or Gitea"
-    echo -e "             ${BLUE}Actions:${NC} Choose platform (Gitea/GitHub), init repo, create initial branch, add files, commit, push"
-    echo -e "             ${BLUE}Note:${NC} Default branch is 'development' for Gitea and 'main' for GitHub"
-    echo -e "             ${BLUE}Note:${NC} Gitea URL will be git.ourworld.tf"
-    echo -e "             ${BLUE}Example:${NC} gits init"
-    echo
-    echo -e "  ${GREEN}new [name]${NC}    Create a new branch and switch to it"
-    echo -e "             ${BLUE}Actions:${NC} create new branch, switch to it"
-    echo -e "             ${BLUE}Note:${NC} If no name is provided, you'll be prompted to enter one"
-    echo -e "             ${BLUE}Example:${NC} gits new"
-    echo -e "             ${BLUE}Example:${NC} gits new feature-branch"
-    echo
-    echo -e "  ${GREEN}delete [branch-name]${NC} Delete a local branch and optionally delete it from remote"
-    echo -e "             ${BLUE}Actions:${NC} Switch to default branch, delete specified branch, optionally delete from remote"
-    echo -e "             ${BLUE}Note:${NC} If no branch name is provided, you'll be prompted to enter one"
-    echo -e "             ${BLUE}Example:${NC} gits delete"
-    echo -e "             ${BLUE}Example:${NC} gits delete feature-branch"
-    echo
-    echo -e "  ${GREEN}revert <number>${NC} Revert to a specified number of commits ago"
-    echo -e "             ${BLUE}Actions:${NC} revert changes to the state X commits ago, stage changes"
-    echo -e "             ${BLUE}Note:${NC} Changes are staged but not committed automatically"
-    echo -e "             ${BLUE}Example:${NC} gits revert 1 (reverts the last commit)"
-    echo -e "             ${BLUE}Example:${NC} gits revert 3 (reverts to 3 commits ago)"
-    echo
-    echo -e "  ${GREEN}unrevert${NC}      Cancel the last revert operation"
-    echo -e "             ${BLUE}Actions:${NC} Undo the last revert if it hasn't been committed"
-    echo -e "             ${BLUE}Example:${NC} gits unrevert"
-    echo
-    echo -e "  ${GREEN}clone <repo>${NC}  Clone a GitHub repository"
-    echo -e "             ${BLUE}Actions:${NC} Clone the repository, switch to the repo directory"
-    echo -e "             ${BLUE}Example:${NC} gits clone https://github.com/org/repo"
-    echo -e "             ${BLUE}Example:${NC} gits clone org/repo (default to GitHub URL)"
-    echo
-    echo -e "  ${GREEN}login${NC}         Login to Gitea or GitHub"
-    echo -e "             ${BLUE}Actions:${NC} Interactive login to selected platform"
-    echo -e "             ${BLUE}Example:${NC} gits login"
-    echo
-    echo -e "  ${GREEN}logout${NC}        Logout from Gitea or GitHub"
-    echo -e "             ${BLUE}Actions:${NC} Logout from selected platform"
-    echo -e "             ${BLUE}Example:${NC} gits logout"
-    echo
-    echo -e "  ${GREEN}install${NC}       Install GitS to /usr/local/bin (requires sudo)"
-    echo -e "             ${BLUE}Example:${NC} gits install"
-    echo
-    echo -e "  ${GREEN}uninstall${NC}     Remove GitS from /usr/local/bin (requires sudo)"
-    echo -e "             ${BLUE}Example:${NC} gits uninstall"
-    echo
-    echo -e "  ${GREEN}help${NC}          Display this help message"
-    echo -e "             ${BLUE}Example:${NC} gits help"
-    echo
-    echo -e "${PURPLE}Note:${NC} Ensure you're in your git repository directory when running git-related commands."
+    echo -e "  ${GREEN}push [branch] [commit-message]${NC}"
+    echo -e "                  ${BLUE}Actions:${NC} add all changes, commit with message, push"
+    echo -e "                  ${BLUE}Note:${NC}    Automatically sets upstream branch if not set"
+    echo -e "                  ${BLUE}Note:${NC}    If no commit message is provided, you'll be prompted"
+    echo -e "                  ${BLUE}Example:${NC} gits push"
+    echo -e "                  ${BLUE}Example:${NC} gits push main"
+    echo -e "                  ${BLUE}Example:${NC} gits push main \"Initial commit\"\n"
+    
+    echo -e "  ${GREEN}pr <action>${NC}"
+    echo -e "                  ${BLUE}Actions:${NC} create, close, merge"
+    echo -e "                  ${BLUE}Example:${NC} gits pr create"
+    echo -e "                  ${BLUE}Example:${NC} gits pr close"
+    echo -e "                  ${BLUE}Example:${NC} gits pr merge\n"
+    
+    echo -e "  ${GREEN}commit${NC}"
+    echo -e "                  ${BLUE}Actions:${NC} prompt for commit message, commit"
+    echo -e "                  ${BLUE}Example:${NC} gits commit\n"
+    
+    echo -e "  ${GREEN}repo <action>${NC}"
+    echo -e "                  ${BLUE}Actions:${NC} create, delete"
+    echo -e "                  ${BLUE}Example:${NC} gits repo create"
+    echo -e "                  ${BLUE}Example:${NC} gits repo delete\n"
+    
+    echo -e "  ${GREEN}init${NC}"
+    echo -e "                  ${BLUE}Actions:${NC} Choose platform, init repo, create branch, add files"
+    echo -e "                  ${BLUE}Note:${NC}    Default branch: 'development' (Gitea), 'main' (GitHub)"
+    echo -e "                  ${BLUE}Note:${NC}    Gitea URL will be git.ourworld.tf"
+    echo -e "                  ${BLUE}Example:${NC} gits init\n"
+    
+    echo -e "  ${GREEN}new [name]${NC}"
+    echo -e "                  ${BLUE}Actions:${NC} create new branch, switch to it"
+    echo -e "                  ${BLUE}Note:${NC}    If no name provided, you'll be prompted"
+    echo -e "                  ${BLUE}Example:${NC} gits new"
+    echo -e "                  ${BLUE}Example:${NC} gits new feature-branch\n"
+    
+    echo -e "  ${GREEN}delete [branch-name]${NC}"
+    echo -e "                  ${BLUE}Actions:${NC} Switch to default, delete branch locally/remotely"
+    echo -e "                  ${BLUE}Note:${NC}    If no name provided, you'll be prompted"
+    echo -e "                  ${BLUE}Example:${NC} gits delete"
+    echo -e "                  ${BLUE}Example:${NC} gits delete feature-branch\n"
+    
+    echo -e "  ${GREEN}revert <number>${NC}"
+    echo -e "                  ${BLUE}Actions:${NC} revert changes to X commits ago, stage changes"
+    echo -e "                  ${BLUE}Note:${NC}    Changes are staged but not committed"
+    echo -e "                  ${BLUE}Example:${NC} gits revert 1"
+    echo -e "                  ${BLUE}Example:${NC} gits revert 3\n"
+    
+    echo -e "  ${GREEN}unrevert${NC}"
+    echo -e "                  ${BLUE}Actions:${NC} Undo the last revert if not committed"
+    echo -e "                  ${BLUE}Example:${NC} gits unrevert\n"
+    
+    echo -e "  ${GREEN}clone <repo>${NC}"
+    echo -e "                  ${BLUE}Actions:${NC} Clone repository, switch to repo directory"
+    echo -e "                  ${BLUE}Example:${NC} gits clone https://github.com/org/repo"
+    echo -e "                  ${BLUE}Example:${NC} gits clone org/repo\n"
+    
+    echo -e "  ${GREEN}login${NC}"
+    echo -e "                  ${BLUE}Actions:${NC} Interactive login to selected platform"
+    echo -e "                  ${BLUE}Example:${NC} gits login\n"
+    
+    echo -e "  ${GREEN}logout${NC}"
+    echo -e "                  ${BLUE}Actions:${NC} Logout from selected platform"
+    echo -e "                  ${BLUE}Example:${NC} gits logout\n"
+    
+    echo -e "  ${GREEN}install${NC}"
+    echo -e "                  ${BLUE}Actions:${NC} Install GitS to /usr/local/bin"
+    echo -e "                  ${BLUE}Example:${NC} gits install\n"
+    
+    echo -e "  ${GREEN}uninstall${NC}"
+    echo -e "                  ${BLUE}Actions:${NC} Remove GitS from /usr/local/bin"
+    echo -e "                  ${BLUE}Example:${NC} gits uninstall\n"
+    
+    echo -e "  ${GREEN}help${NC}"
+    echo -e "                  ${BLUE}Actions:${NC} Display this help message"
+    echo -e "                  ${BLUE}Example:${NC} gits help\n"
+    
+    echo -e "${PURPLE}Note:${NC} Ensure you're in your git repository directory when running git-related commands.\n"
 }
 
 # Main execution logic
