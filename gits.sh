@@ -772,7 +772,7 @@ echo -e "             ${BLUE}Note:${NC} Automatically sets upstream branch if no
 echo -e "             ${BLUE}Note:${NC} If no commit message is provided, you'll be prompted to enter one"
 echo -e "             ${BLUE}Example:${NC} gits push"
 echo -e "             ${BLUE}Example:${NC} gits push main"
-echo -e "             ${BLUE}Example:${NC} gits push main \"Initial commit\""
+echo -e "             ${BLUE}Example:${NC} gits push main \"Initial commit\" (Quotes optional)"
     echo
     echo -e "  ${GREEN}push${NC}          Rapidly stage, commit, and push changes"
     echo -e "             ${BLUE}Actions:${NC} add all changes, prompt for commit message, commit, push"
