@@ -774,6 +774,12 @@ help() {
     echo -e "                  ${BLUE}Example:${NC} gits push main"
     echo -e "                  ${BLUE}Example:${NC} gits push main \"Initial commit\"\n"
     
+    echo -e "  ${GREEN}pull [branch]${NC}"
+    echo -e "                  ${BLUE}Actions:${NC} Checkout branch, stash changes, fetch, pull, show status"
+    echo -e "                  ${BLUE}Note:${NC}    Default branch is 'development' if not specified"
+    echo -e "                  ${BLUE}Example:${NC} gits pull"
+    echo -e "                  ${BLUE}Example:${NC} gits pull main\n"
+    
     echo -e "  ${GREEN}pr <action>${NC}"
     echo -e "                  ${BLUE}Actions:${NC} create, close, merge"
     echo -e "                  ${BLUE}Example:${NC} gits pr create"
@@ -821,6 +827,11 @@ help() {
     echo -e "                  ${BLUE}Actions:${NC} Clone repository, switch to repo directory"
     echo -e "                  ${BLUE}Example:${NC} gits clone https://github.com/org/repo"
     echo -e "                  ${BLUE}Example:${NC} gits clone org/repo\n"
+    
+    echo -e "  ${GREEN}clone-all${NC}"
+    echo -e "                  ${BLUE}Actions:${NC} Clone all repositories from a user"
+    echo -e "                  ${BLUE}Note:${NC}    Creates a directory with username and clones all repos into it"
+    echo -e "                  ${BLUE}Example:${NC} gits clone-all\n"
     
     echo -e "  ${GREEN}login${NC}"
     echo -e "                  ${BLUE}Actions:${NC} Interactive login to selected platform"
