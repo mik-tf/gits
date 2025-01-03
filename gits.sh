@@ -220,24 +220,49 @@ pr_create() {
     if [ "$platform_choice" = "1" ]; then
         # Show current PRs
         echo -e "${BLUE}Current Pull Requests:${NC}"
-        tea pr
+        tea pr list
 
-        # Get repository details
-        echo -e "\n${GREEN}Enter repository (organization/repository):${NC}"
-        read repo
+        # Get the full repository path from git remote
+        remote_url=$(git remote get-url origin)
+        echo -e "Remote URL: $remote_url"
+
+        echo -e "${GREEN}Enter target organization or username:${NC}"
+        read target_org
+
+        echo -e "${GREEN}Enter target repository name:${NC}"
+        read target_repo
 
         echo -e "${GREEN}Enter Pull Request title:${NC}"
         read title
 
-        echo -e "${GREEN}Enter base branch (default: development):${NC}"
+        echo -e "${GREEN}Enter base branch (default: main):${NC}"
         read base
-        base=${base:-development}
+        base=${base:-main}
 
         echo -e "${GREEN}Enter head branch:${NC}"
         read head
 
-        echo -e "\n${PURPLE}Creating Pull Request...${NC}"
-        tea pull create --repo "$repo" --title "$title" --base "$base" --head "$head"
+        echo -e "${GREEN}Enter PR description (optional):${NC}"
+        read description
+
+        # Construct the full repository path
+        full_repo="${target_org}/${target_repo}"
+        echo -e "\n${PURPLE}Creating Pull Request to ${full_repo}...${NC}"
+        
+        if [ -n "$description" ]; then
+            tea pr create \
+                --repo "$full_repo" \
+                --title "$title" \
+                --base "$base" \
+                --head "$head" \
+                --description "$description"
+        else
+            tea pr create \
+                --repo "$full_repo" \
+                --title "$title" \
+                --base "$base" \
+                --head "$head"
+        fi
     else
         # GitHub PR creation
         echo -e "${BLUE}Current Pull Requests:${NC}"
