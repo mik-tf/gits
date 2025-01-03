@@ -760,12 +760,19 @@ help() {
     echo -e "${ORANGE}              GitS - Git Speed              ${NC}"
     echo -e "${ORANGE}═══════════════════════════════════════════${NC}\n"
     
-    echo -e "${PURPLE}Description:${NC} GitS is a Bash CLI tool for speeding up common git/gh/tea operations by combining multiple commands."
-    echo -e "${PURPLE}Usage:${NC}       gits <command>"
-    echo -e "${PURPLE}License:${NC}      Apache 2.0"
-    echo -e "${PURPLE}Code:${NC}         https://github.com/Mik-TF/gits.git\n"
+    echo -e "${PURPLE}Description:${NC} GitS is a Bash CLI tool that enhances Git with additional features while maintaining full Git compatibility."
+    echo -e "${PURPLE}Key Feature:${NC} GitS automatically passes through any native Git commands that aren't specifically handled by GitS."
+    echo -e "${PURPLE}Example:${NC}     'gits status' will execute 'git status' since it's not a GitS command"
+    echo -e "${PURPLE}Usage:${NC}       gits <command> [arguments]"
+    echo -e "${PURPLE}License:${NC}     Apache 2.0"
+    echo -e "${PURPLE}Code:${NC}        https://github.com/Mik-TF/gits.git\n"
     
-    echo -e "${PURPLE}Available commands:${NC}"
+    echo -e "${PURPLE}Command Handling:${NC}"
+    echo -e "  1. First tries to execute GitS-specific commands (listed below)"
+    echo -e "  2. If not found, automatically passes the command to Git"
+    echo -e "  3. If neither GitS nor Git recognizes the command, shows an error\n"
+    
+    echo -e "${PURPLE}GitS-specific commands:${NC}"
     echo -e "  ${GREEN}push [branch] [commit-message]${NC}"
     echo -e "                  ${BLUE}Actions:${NC} add all changes, commit with message, push"
     echo -e "                  ${BLUE}Note:${NC}    Automatically sets upstream branch if not set"
@@ -853,7 +860,15 @@ help() {
     echo -e "                  ${BLUE}Actions:${NC} Display this help message"
     echo -e "                  ${BLUE}Example:${NC} gits help\n"
     
-    echo -e "${PURPLE}Note:${NC} Ensure you're in your git repository directory when running git-related commands.\n"
+    echo -e "${PURPLE}Git Commands:${NC}"
+    echo -e "  ${BLUE}All standard Git commands are supported through automatic passthrough${NC}"
+    echo -e "  ${BLUE}Example:${NC} gits status       → runs git status"
+    echo -e "  ${BLUE}Example:${NC} gits log          → runs git log"
+    echo -e "  ${BLUE}Example:${NC} gits diff         → runs git diff\n"
+    echo -e "  ${BLUE}Note:${NC} Any Git command not listed above will be passed directly to Git\n"
+    
+    echo -e "${PURPLE}Note:${NC} Ensure you're in your git repository directory when running git-related commands."
+    echo -e "${PURPLE}Tip:${NC}  Use 'git help' to see all available Git commands that can be used with GitS.\n"
 }
 
 # Main execution logic
@@ -925,9 +940,15 @@ main() {
             help
             ;;
         *)
-            echo -e "${GREEN}Unknown command:${NC} $1"
-            echo "Run 'gits help' for usage information."
-            exit 1
+            # Check if the command exists in git
+            if git help "$1" >/dev/null 2>&1; then
+                # Command exists in git, pass all arguments to git
+                git "$@"
+            else
+                echo -e "${RED}Error: Command '$1' not found in gits or git${NC}"
+                echo -e "Run '${GREEN}gits help${NC}' for usage information or '${GREEN}git help${NC}' for git commands."
+                exit 1
+            fi
             ;;
     esac
 }
