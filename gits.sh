@@ -24,7 +24,38 @@ clone() {
     echo -e "${GREEN}Cloning repository: $repo${NC}"
     if git clone "$repo"; then
         local repo_name=$(basename "$repo" .git)
-        cd "$repo_name"
+        cd "$repo_name" || return 1  # Exit if directory not found
+
+        # Determine the SSH remote URL
+        original_repo_url="$repo"
+
+        # Extract host and path from the original URL
+        if [[ $original_repo_url == http* ]]; then
+            host_part=$(echo "$original_repo_url" | sed -E 's|^https?://([^/]+)/.*|\1|')
+            path_part=$(echo "$original_repo_url" | sed -E 's|^https?://[^/]+/(.*)|\1|')
+        else
+            host_part="github.com"
+            path_part="$original_repo_url"
+        fi
+
+        # Remove .git suffix from path_part if present
+        path_part="${path_part%.git}"
+
+        # Construct SSH URL based on the host
+        if [[ "$host_part" == *"github.com"* ]]; then
+            ssh_url="git@github.com:$path_part.git"
+        elif [[ "$host_part" == *"git.ourworld.tf"* ]]; then
+            ssh_url="git@git.ourworld.tf:$path_part.git"
+        else
+            echo -e "${ORANGE}Warning: Unsupported host '$host_part'. Remote URL not updated.${NC}"
+            ssh_url=""
+        fi
+
+        if [ -n "$ssh_url" ]; then
+            echo -e "${GREEN}Updating remote origin to SSH URL: $ssh_url${NC}"
+            git remote set-url origin "$ssh_url"
+        fi
+
         echo -e "${PURPLE}Repository cloned successfully. Switched to directory: $(pwd)${NC}"
         echo -e '\nHit [Ctrl]+[D] to exit this child shell.'
         exec bash
