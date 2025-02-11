@@ -811,6 +811,109 @@ uninstall() {
     fi
 }
 
+clone-list() {
+    echo -e "${GREEN}Enter the list of repositories (one per line, end with an empty line):${NC}"
+    echo -e "${BLUE}Supported formats:${NC}"
+    echo -e "- https://github.com/org/repo"
+    echo -e "- github.com/org/repo"
+    echo -e "- https://git.ourworld.tf/org/repo"
+    echo -e "- git.ourworld.tf/org/repo\n"
+    
+    # Ask for credentials upfront
+    echo -e "${GREEN}Do you need to provide credentials? (y/N):${NC}"
+    read -r need_auth
+    
+    if [[ $need_auth =~ ^[Yy]$ ]]; then
+        echo -e "${GREEN}Enter username:${NC}"
+        read -r git_username
+        echo -e "${GREEN}Enter password/token:${NC}"
+        read -rs git_password
+        echo -e "\n${GREEN}Password accepted.${NC}"  # Add confirmation message
+        echo
+        
+        # Store credentials temporarily
+        export GIT_USERNAME="$git_username"
+        export GIT_PASSWORD="$git_password"
+    fi
+
+    # Prompt the user to paste the list of repositories
+    echo -e "${GREEN}Please paste the list of repositories (one per line, end with an empty line):${NC}"
+    echo -e "${BLUE}You can now paste the list. Press Enter twice to finish.${NC}"
+    
+    # Read the list of repositories
+    while IFS= read -r line; do
+        # Break the loop if an empty line is entered
+        if [ -z "$line" ]; then
+            break
+        fi
+        
+        # Clean the line
+        line=$(echo "$line" | sed 's/^[[:space:]]*-[[:space:]]*//; s/^[[:space:]]*//; s/[[:space:]]*$//')
+        
+        # Extract URL pattern
+        if [[ $line =~ (https?://)?([a-zA-Z0-9][a-zA-Z0-9.-]*\.[a-zA-Z]+)/([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+) ]]; then
+            domain="${BASH_REMATCH[2]}"
+            org="${BASH_REMATCH[3]}"
+            repo="${BASH_REMATCH[4]}"
+            
+            # Construct URL with credentials if provided
+            if [[ $need_auth =~ ^[Yy]$ ]]; then
+                url="https://$GIT_USERNAME:$GIT_PASSWORD@$domain/$org/$repo"
+            else
+                if [[ $line =~ ^https?:// ]]; then
+                    url=$(echo "$line" | cut -d' ' -f1)
+                else
+                    url="https://$domain/$org/$repo"
+                fi
+            fi
+            
+            target_dir="code/$domain/$org/$repo"
+            
+            echo -e "\n${BLUE}═══════════════════════════════════════════${NC}"
+            echo -e "${BLUE}Processing: $org/$repo${NC}"
+            echo -e "${BLUE}Target: $target_dir${NC}"
+            
+            if [ -d "$target_dir" ]; then
+                echo -e "${ORANGE}Repository exists, pulling updates...${NC}"
+                (cd "$target_dir" && {
+                    if [[ $need_auth =~ ^[Yy]$ ]]; then
+                        git remote set-url origin "$url"
+                    fi
+                    git fetch
+                    git pull
+                    if [[ $need_auth =~ ^[Yy]$ ]]; then
+                        ssh_url="git@$domain:$org/$repo.git"
+                        git remote set-url origin "$ssh_url"
+                    fi
+                })
+            else
+                echo -e "${PURPLE}Cloning repository...${NC}"
+                mkdir -p "$(dirname "$target_dir")"
+                if git clone "$url" "$target_dir"; then
+                    echo -e "${GREEN}Successfully cloned${NC}"
+                    (cd "$target_dir" && {
+                        ssh_url="git@$domain:$org/$repo.git"
+                        echo -e "${PURPLE}Setting SSH URL: $ssh_url${NC}"
+                        git remote set-url origin "$ssh_url"
+                    })
+                else
+                    echo -e "${RED}Failed to clone${NC}"
+                fi
+            fi
+        else
+            echo -e "${RED}Invalid repository format: $line${NC}"
+        fi
+    done
+
+    # Clean up
+    if [[ $need_auth =~ ^[Yy]$ ]]; then
+        unset GIT_USERNAME
+        unset GIT_PASSWORD
+    fi
+
+    echo -e "\n${GREEN}Clone list operation completed${NC}"
+}
+
 help() {
     echo -e "\n${ORANGE}═══════════════════════════════════════════${NC}"
     echo -e "${ORANGE}              GitS - Git Speed              ${NC}"
@@ -896,6 +999,12 @@ help() {
     echo -e "                  ${BLUE}Note:${NC}    Creates a directory with username and clones all repos into it"
     echo -e "                  ${BLUE}Example:${NC} gits clone-all\n"
     
+    echo -e "  ${GREEN}clone-list${NC}"
+    echo -e "                  ${BLUE}Actions:${NC} Clone multiple repositories from a pasted list"
+    echo -e "                  ${BLUE}Note:${NC}    Creates directory structure code/<domain>/<org>/<repo>"
+    echo -e "                  ${BLUE}Note:${NC}    Supports various URL formats including github.com and git.ourworld.tf"
+    echo -e "                  ${BLUE}Example:${NC} gits clone-list\n"
+
     echo -e "  ${GREEN}login${NC}"
     echo -e "                  ${BLUE}Actions:${NC} Interactive login to selected platform"
     echo -e "                  ${BLUE}Example:${NC} gits login\n"
@@ -985,6 +1094,9 @@ main() {
         clone-all)
             shift
             clone-all "$@"
+            ;;
+        clone-list)
+            clone-list
             ;;
         install)
             install
